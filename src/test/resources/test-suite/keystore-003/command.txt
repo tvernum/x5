@@ -1,0 +1,1 @@
+read keystore/multiple-keys.p12 | each ( .public |  write - )

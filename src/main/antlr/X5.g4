@@ -95,7 +95,7 @@ fragment Hexchar: [0-9a-fA-F];
 WS: [ \r\n\t] + -> skip
   ;
 
-Word: WordStart (WordOther)+ ;
+Word: WordStart WordOther* ;
 
 fragment WordStart: [a-zA-Z0-9/\-#];
 fragment WordOther: ~ [(){},|; \r\n\t];

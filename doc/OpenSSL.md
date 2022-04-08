@@ -73,13 +73,13 @@ x5 read keyStore.p12 | info
 **_OpenSSL_**
 
 ```
-openssl pkcs12 -clcerts -in keyStore.p12
+openssl pkcs12 -clcerts -in src/test/resources/samples/keystore/multiple-keys.p12
 ```
 
 **_X5_**
 
 ```
-read src/test/resources/samples/keystore/mixed.p12 | each { write - }
+x5 read src/test/resources/samples/keystore/multiple-keys.p12 | each ( write - )
 ```
 
 ### Public Keys
