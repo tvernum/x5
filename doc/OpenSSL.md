@@ -115,8 +115,15 @@ x5 read example.key | .public | info
 _or_	
 
 ```
-x5 read example.key | .public.modulus | write -
+x5 read example.key | .public | .rsa.modulus | write -
 ```
+
+_or_	
+
+```
+x5 read example.key | .public.rsa.modulus | hex | print
+```
+
 
 ### EC Private Keys
 
