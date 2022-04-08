@@ -16,7 +16,9 @@ package org.adjective.x5.command;
 
 import static org.adjective.x5.util.Values.nullValue;
 
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.adjective.x5.exception.ValueSetException;
 import org.adjective.x5.exception.X5Exception;
@@ -33,7 +35,8 @@ public class PropertyCommand extends AbstractCommand {
         requireMinimumArgumentCount(1, args);
         X5Object object = values.pop();
         String scope = null;
-        for (String propertyName : args) {
+        final List<String> names = args.stream().map(s -> s.split("\\.")).flatMap(Arrays::stream).collect(Collectors.toList());
+        for (String propertyName : names) {
             boolean optional = false;
             if (propertyName.endsWith("?")) {
                 propertyName = propertyName.substring(0, propertyName.length() - 1);

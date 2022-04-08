@@ -19,4 +19,4 @@ seq(
  read pem/ec/ec-secp521r1.key
 )
 | each ( as PrivateKey )
-| each ( seq( .ec.curve.id | .name , .ec.key | hex ":" , .ec.public.raw ) | print )
+| each ( seq( .ec.curve.id.name , .ec.key | hex ":" , .ec.public.raw ) | print )

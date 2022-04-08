@@ -1,5 +1,4 @@
 read pem/server1.key
-    | .public
-    | .rsa.modulus 
+    | .public.rsa.modulus 
     | hex
     | write -
