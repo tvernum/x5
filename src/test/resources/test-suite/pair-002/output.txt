@@ -1,0 +1,6 @@
+                          Source : command-line::pair()
+                     Object Type : Sequence{Certificate|PrivateKey}
+
+                          item.1 : PrivateKey : Object #1 from pem/server2.pkcs8.key
+                          item.2 : Certificate : Object #1 from pem/server2.crt (DC=net,DC=example,CN=server)
+--------------------------------   --------------------------------

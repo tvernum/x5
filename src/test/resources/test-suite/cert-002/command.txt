@@ -1,0 +1,1 @@
+read pem/ca1.crt | as chain | .#0  | info

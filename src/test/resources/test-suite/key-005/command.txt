@@ -1,0 +1,5 @@
+seq ( 
+    read pem/intermediate1.key,
+    read pem/intermediate1.pkcs8.key
+    )
+ | ( info ; .item.1 | .private | info ; .item.2 | info )

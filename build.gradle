@@ -1,0 +1,70 @@
+/*
+ *
+ */
+
+plugins {
+    id 'java'
+    id 'antlr'
+    id 'application'
+    id 'org.mikeneck.graalvm-native-image' version '0.3.0'
+}
+
+ext {
+    packageName = "org.adjective.x5";
+    packageDir = packageName.replace(".", "/");
+    mainClass = "${packageName}.Main";
+    graalVmHome = System.env.GRAAL_HOME
+}
+
+repositories {
+    jcenter()
+}
+
+dependencies {
+    implementation 'net.sf.jopt-simple:jopt-simple:5.0.2'
+    implementation 'org.bouncycastle:bcprov-jdk15on:1.65'
+    implementation 'org.bouncycastle:bcpkix-jdk15on:1.65'
+
+    antlr 'org.antlr:antlr4:4.9.3'
+
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.0'
+    testImplementation 'org.junit.jupiter:junit-jupiter-params:5.7.0'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.0'
+    testImplementation 'org.assertj:assertj-core:3.21.0'
+}
+
+test {
+    useJUnitPlatform()
+}
+
+generateGrammarSource {
+    outputDirectory = file("${project.buildDir}/generated-src/antlr/main/${packageDir}/cli/parser/")
+    arguments += ["-visitor", "-long-messages"]
+}
+
+nativeImage {
+    graalVmHome = project.ext.graalVmHome
+    mainClass = project.ext.mainClass
+    executableName = 'x5'
+    arguments(
+            '--no-fallback',
+            '--enable-all-security-services'
+            // "--initialize-at-run-time=${packageName}",
+            // "--initialize-at-build-time=sun.security.pkcs12.PKCS12KeyStore",
+            // "-H:ReflectionConfigurationFiles=${projectDir}/buildSrc/graal/reflect-keystore.json",
+            // '--report-unsupported-elements-at-runtime'
+    )
+}
+
+task copySharedLibrary(type: Copy) {
+    from("${graalVmHome}/lib/") {
+        include "libsunec.*"
+    }
+    into "${buildDir}/native-image/"
+}
+
+application {
+    // Define the main class for the application.
+    getMainClass().set(project.ext.mainClass)
+}
+

@@ -1,0 +1,1 @@
+entry("server", read pem/server2.crt) | info

@@ -1,0 +1,7 @@
+seq (
+    read pem/ca1.key,
+    read pem/ca1.des3.key,
+    read pem/ca1.aes128.key,
+    read pem/ca1.aes192.key,
+    read pem/ca1.aes256.key 
+) | each ( .private | .algorithm ) | info

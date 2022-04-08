@@ -1,0 +1,22 @@
+seq(
+ read pem/ec/ec-brainpoolP192t1.key ,
+ read pem/ec/ec-brainpoolP224r1.key ,
+ read pem/ec/ec-brainpoolP256t1.key ,
+ read pem/ec/ec-brainpoolP320r1.key ,
+ read pem/ec/ec-brainpoolP384t1.key ,
+ read pem/ec/ec-brainpoolP512r1.key ,
+ read pem/ec/ec-prime192v3.key ,
+ read pem/ec/ec-prime239v2.key ,
+ read pem/ec/ec-prime256v1.key ,
+ read pem/ec/ec-secp112r1.key ,
+ read pem/ec/ec-secp128r2.key ,
+ read pem/ec/ec-secp160k1.key ,
+ read pem/ec/ec-secp160r2.key ,
+ read pem/ec/ec-secp192k1.key ,
+ read pem/ec/ec-secp224r1.key ,
+ read pem/ec/ec-secp256k1.key ,
+ read pem/ec/ec-secp384r1.key ,
+ read pem/ec/ec-secp521r1.key
+)
+| each ( as PrivateKey )
+| each ( seq( .ec.curve.id | .name , .ec.key | hex ":" , .ec.public.raw ) | print )

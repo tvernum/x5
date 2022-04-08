@@ -1,0 +1,9 @@
+                            Path : pem/ca1.key
+                          Source : Object #1 from pem/ca1.key
+                       File Type : PEM
+                          Syntax : PKCS#1
+                     Object Type : KeyPair
+
+                         private : PrivateKey : Object #1 from pem/ca1.key
+                          public : PublicKey : Object #1 from pem/ca1.key
+--------------------------------   --------------------------------

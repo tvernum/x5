@@ -1,0 +1,6 @@
+                          Source : command-line::seq()
+                     Object Type : Sequence{Certificate}
+
+                          item.1 : Certificate : Object #1 from pem/server2.chain (DC=net,DC=example,CN=server)
+                          item.2 : Certificate : Object #3 from pem/server2.chain (DC=net,DC=example,OU=security,CN=Root CA)
+--------------------------------   --------------------------------

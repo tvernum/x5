@@ -1,0 +1,14 @@
+# Ignore Gradle project-specific cache directory
+.gradle
+
+# Ignore Gradle build output directory
+build
+buildSrc
+
+# Ignore test file
+/*.key
+/*.crt
+/*.pem
+/*.p12
+sample.*
+password.*

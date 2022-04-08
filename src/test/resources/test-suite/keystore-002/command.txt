@@ -1,0 +1,1 @@
+read keystore/multiple-keys.p12 | as Sequence | each ( .value | .private | .algorithm | as String ) | sort | each ( print ) 

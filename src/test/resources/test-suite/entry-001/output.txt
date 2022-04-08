@@ -1,0 +1,8 @@
+                            Path : pem/server2.crt
+                          Source : entry from Object #1 from pem/server2.crt
+                       File Type : PEM
+                     Object Type : StoreEntry
+
+                            name : server
+                           value : Certificate : Object #1 from pem/server2.crt (DC=net,DC=example,CN=server)
+--------------------------------   --------------------------------

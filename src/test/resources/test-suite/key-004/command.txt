@@ -1,0 +1,1 @@
+read pem/ca1.key | .private | remove-password | info

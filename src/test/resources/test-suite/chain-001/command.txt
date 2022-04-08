@@ -1,0 +1,1 @@
+read pem/server2.chain | info

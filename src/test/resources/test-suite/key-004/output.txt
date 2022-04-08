@@ -1,0 +1,9 @@
+                            Path : pem/ca1.key
+                          Source : Object #1 from pem/ca1.key
+                       File Type : PEM
+                          Syntax : PKCS#1
+                     Object Type : PrivateKey
+
+                       algorithm : 1.2.840.113549.1.1.1 [RSA (PKCS#1)] (Algorithm)
+                       encrypted : false
+--------------------------------   --------------------------------

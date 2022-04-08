@@ -1,0 +1,24 @@
+                          Source : command-line::seq()
+                     Object Type : Sequence{KeyPair|PrivateKey}
+
+                          item.1 : KeyPair{PrivateKey,PublicKey} : Object #1 from pem/intermediate1.key
+                          item.2 : PrivateKey : Object #1 from pem/intermediate1.pkcs8.key
+--------------------------------   --------------------------------
+                            Path : pem/intermediate1.key
+                          Source : Object #1 from pem/intermediate1.key
+                       File Type : PEM
+                          Syntax : PKCS#1
+                     Object Type : PrivateKey
+
+                       algorithm : 1.2.840.113549.1.1.1 [RSA (PKCS#1)] (Algorithm)
+                       encrypted : false
+--------------------------------   --------------------------------
+                            Path : pem/intermediate1.pkcs8.key
+                          Source : Object #1 from pem/intermediate1.pkcs8.key
+                       File Type : PEM
+                          Syntax : PKCS#8
+                     Object Type : PrivateKey
+
+                       algorithm : 1.2.840.113549.1.1.1 [RSA (PKCS#1)] (Algorithm)
+                       encrypted : false
+--------------------------------   --------------------------------

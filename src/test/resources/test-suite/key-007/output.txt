@@ -1,0 +1,9 @@
+                          Source : each of command-line::seq()
+                     Object Type : Sequence{Algorithm}
+
+                          item.1 : 1.2.840.113549.1.1.1 [RSA (PKCS#1)] (Algorithm)
+                          item.2 : 1.2.840.113549.1.1.1 [RSA (PKCS#1)] (Algorithm)
+                          item.3 : 1.2.840.113549.1.1.1 [RSA (PKCS#1)] (Algorithm)
+                          item.4 : 1.2.840.113549.1.1.1 [RSA (PKCS#1)] (Algorithm)
+                          item.5 : 1.2.840.113549.1.1.1 [RSA (PKCS#1)] (Algorithm)
+--------------------------------   --------------------------------

@@ -1,0 +1,3 @@
+pair ( read pem/server2.crt , read pem/server2.pkcs8.key )
+    | as sequence
+    | info
