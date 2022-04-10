@@ -18,8 +18,8 @@ import java.util.List;
 
 import org.adjective.x5.exception.X5Exception;
 import org.adjective.x5.types.Sequence;
+import org.adjective.x5.types.ToTextValue;
 import org.adjective.x5.types.X5Object;
-import org.adjective.x5.types.X5Value;
 
 public class PrintCommand extends AbstractCommand {
 
@@ -39,8 +39,8 @@ public class PrintCommand extends AbstractCommand {
     }
 
     private CharSequence valueOf(X5Object obj) throws X5Exception {
-        if (obj instanceof X5Value) {
-            return String.valueOf(((X5Value<?>) obj).value());
+        if (obj instanceof ToTextValue) {
+            return ((ToTextValue) obj).toTextValue();
         } else if (obj instanceof Sequence) {
             Sequence seq = (Sequence) obj;
             StringBuilder builder = new StringBuilder("(");

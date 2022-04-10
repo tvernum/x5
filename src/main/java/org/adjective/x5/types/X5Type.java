@@ -110,4 +110,11 @@ public class X5Type<X extends X5Object> {
         return name;
     }
 
+    public boolean isValue(X5Object object) {
+        return this.equals(object.getType()) || this.objectClass.isInstance(object);
+    }
+
+    public X cast(X5Object obj) {
+        return this.objectClass.cast(obj);
+    }
 }

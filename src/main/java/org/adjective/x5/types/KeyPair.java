@@ -21,7 +21,7 @@ import java.util.Optional;
 
 import org.adjective.x5.exception.X5Exception;
 
-public interface KeyPair extends CryptoValue {
+public interface KeyPair extends CryptoValue, ToTextValue {
 
     PrivateCredential privateCredential();
 
@@ -61,14 +61,12 @@ public interface KeyPair extends CryptoValue {
 
     @Override
     default String description() {
-        return getTypeName()
-            + "{"
-            + privateCredential().getTypeName()
-            + ","
-            + publicCredential().getTypeName()
-            + "}"
-            + " : "
-            + getSource().getSourceDescription();
+        return toTextValue() + " : " + getSource().getSourceDescription();
+    }
+
+    @Override
+    default String toTextValue() {
+        return getTypeName() + "{" + privateCredential().getTypeName() + "," + publicCredential().getTypeName() + "}";
     }
 
     @Override

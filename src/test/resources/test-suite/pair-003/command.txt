@@ -1,0 +1,4 @@
+seq ( 
+    pair ( read pem/ca1.crt, read pem/ca1.des3.key ),
+    pair ( read 'pem/ca1.aes256.key', read "pem/ca1.crt" )
+) | print

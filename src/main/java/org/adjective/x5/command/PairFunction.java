@@ -40,25 +40,74 @@ public class PairFunction extends EvaluatedFunction<KeyPair> implements CommandL
         final CryptoValue v1 = evaluateArgument(0, X5Type.ANY_CRYPTO, runner, argumentExpressions);
         final CryptoValue v2 = evaluateArgument(1, X5Type.ANY_CRYPTO, runner, argumentExpressions);
 
-        if (v1 instanceof PublicCredential) {
-            if (v2 instanceof PrivateCredential) {
-                return new BasicKeyPair((PrivateCredential) v2, (PublicCredential) v1, getSource());
-            } else if (v2 instanceof PublicCredential) {
-                throw new BadArgumentException("Cannot create a key-pair from two public credentials", this);
-            } else {
-                throw new BadArgumentException("Unsupported cryptographic object type " + v2.getTypeName() + " for " + name(), this);
-            }
-        } else if (v1 instanceof PrivateCredential) {
-            if (v2 instanceof PublicCredential) {
-                return new BasicKeyPair((PrivateCredential) v1, (PublicCredential) v2, getSource());
-            } else if (v2 instanceof PrivateCredential) {
-                throw new BadArgumentException("Cannot create a key-pair from two private credentials", this);
-            } else {
-                throw new BadArgumentException("Unsupported cryptographic object type " + v2.getTypeName() + " for " + name(), this);
-            }
-        } else {
-            throw new BadArgumentException("Unsupported cryptographic object type " + v1.getTypeName() + " for " + name(), this);
+        KeyPair pair = trySimplePair(v1, v2);
+        if (pair != null) {
+            return pair;
         }
+        pair = trySimplePair(v2, v1);
+        if (pair != null) {
+            return pair;
+        }
+        pair = tryConversionPair(v1, v2);
+        if (pair != null) {
+            return pair;
+        }
+        pair = tryConversionPair(v2, v1);
+        if (pair != null) {
+            return pair;
+        }
+        throw unsupportedCryptoObject(v1);
+    }
+
+    private KeyPair trySimplePair(CryptoValue v1, CryptoValue v2) throws X5Exception {
+        if (v1 instanceof PublicCredential) {
+            return new BasicKeyPair(getPrivateCredential(v2), (PublicCredential) v1, getSource());
+        } else if (v1 instanceof PrivateCredential) {
+            return new BasicKeyPair((PrivateCredential) v1, getPublicCredential(v2), getSource());
+        }
+        return null;
+    }
+
+    private KeyPair tryConversionPair(CryptoValue v1, CryptoValue v2) throws X5Exception {
+        var pub1 = v1.as(X5Type.PUBLIC_CREDENTIAL);
+        var priv1 = v1.as(X5Type.PRIVATE_CREDENTIAL);
+        if (pub1.isPresent() && priv1.isEmpty()) {
+            return new BasicKeyPair(getPrivateCredential(v2), pub1.get(), getSource());
+        }
+        if (priv1.isPresent() && pub1.isEmpty()) {
+            return new BasicKeyPair(priv1.get(), getPublicCredential(v2), getSource());
+        }
+        return null;
+    }
+
+    private PrivateCredential getPrivateCredential(CryptoValue cryptoValue) throws BadArgumentException {
+        return getCredential(cryptoValue, X5Type.PRIVATE_CREDENTIAL, X5Type.PUBLIC_CREDENTIAL);
+    }
+
+    private PublicCredential getPublicCredential(CryptoValue cryptoValue) throws BadArgumentException {
+        return getCredential(cryptoValue, X5Type.PUBLIC_CREDENTIAL, X5Type.PRIVATE_CREDENTIAL);
+    }
+
+    private <C extends CryptoValue> C getCredential(
+        CryptoValue cryptoValue,
+        X5Type<C> requiredType,
+        X5Type<? extends CryptoValue> invalidType
+    ) throws BadArgumentException {
+        if (requiredType.isValue(cryptoValue)) {
+            return requiredType.cast(cryptoValue);
+        } else if (invalidType.isValue(cryptoValue)) {
+            throw twoIdenticalTypes(X5Type.PUBLIC_CREDENTIAL);
+        } else {
+            return cryptoValue.as(requiredType).orElseThrow(() -> unsupportedCryptoObject(cryptoValue));
+        }
+    }
+
+    private BadArgumentException twoIdenticalTypes(X5Type type) {
+        return new BadArgumentException("Cannot create a key-pair from two " + type.name() + " values", this);
+    }
+
+    private BadArgumentException unsupportedCryptoObject(CryptoValue cryptoValue) {
+        return new BadArgumentException("Unsupported cryptographic object type " + cryptoValue.getTypeName() + " for " + name(), this);
     }
 
 }

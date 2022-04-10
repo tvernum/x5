@@ -14,22 +14,9 @@
 
 package org.adjective.x5.types;
 
-import java.util.Map;
+import org.adjective.x5.exception.X5Exception;
 
-/**
- * A primitive value such as a string, number, boolean etc.
- */
-public interface X5Value<T> extends X5Object, ToTextValue {
+public interface ToTextValue {
 
-    T value();
-
-    @Override
-    default Map<String, X5Object> properties() {
-        return Map.of();
-    }
-
-    @Override
-    default CharSequence toTextValue() {
-        return String.valueOf(value());
-    }
+    CharSequence toTextValue();
 }
