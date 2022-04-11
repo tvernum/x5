@@ -18,16 +18,17 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import org.adjective.x5.cli.ChainedCommandLine;
 import org.adjective.x5.cli.CommandLine;
-import org.adjective.x5.cli.CommandLineStack;
 import org.adjective.x5.cli.CommandRunner;
+import org.adjective.x5.cli.MultipleCommandLine;
 import org.adjective.x5.exception.CommandExecutionException;
 import org.adjective.x5.exception.X5Exception;
 import org.adjective.x5.types.ObjectSequence;
 import org.adjective.x5.types.Sequence;
 import org.adjective.x5.types.X5Object;
 
-abstract class IterationCommand implements CommandLineFunction {
+abstract class IterationCommand extends AbstractFunction implements CommandLineFunction {
 
     @Override
     public void apply(CommandRunner runner, List<CommandLine> args) throws X5Exception {
@@ -46,7 +47,7 @@ abstract class IterationCommand implements CommandLineFunction {
     }
 
     protected void apply(CommandRunner runner, List<CommandLine> args, Sequence sequence) throws X5Exception {
-        final CommandLineStack body = new CommandLineStack(args);
+        final CommandLine body = new ChainedCommandLine(args);
         final List<X5Object> result = new ArrayList<>();
         for (X5Object object : sequence.items()) {
             CommandRunner childRunner = runner.duplicate();

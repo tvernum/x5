@@ -14,41 +14,27 @@
 
 package org.adjective.x5.cli;
 
-import java.util.Deque;
-import java.util.LinkedList;
+import java.util.Iterator;
 import java.util.List;
-import java.util.Objects;
 
 import org.adjective.x5.exception.X5Exception;
-import org.adjective.x5.io.Debug;
 
-public class CommandLineStack implements CommandLine {
+public class ChainedCommandLine implements CommandLine {
+    private final List<CommandLine> commands;
 
-    private final Deque<CommandLine> commands;
-
-    public CommandLineStack() {
-        this.commands = new LinkedList<>();
-    }
-
-    public CommandLineStack(List<CommandLine> commands) {
-        this();
-        this.commands.addAll(commands);
+    public ChainedCommandLine(List<CommandLine> commands) {
+        this.commands = commands;
     }
 
     @Override
     public void execute(CommandRunner runner) throws X5Exception {
-        for (CommandLine c : commands) {
-            c.execute(runner);
+        for (Iterator<CommandLine> iterator = commands.iterator(); iterator.hasNext();) {
+            CommandLine command = iterator.next();
+            if (iterator.hasNext()) {
+                command.execute(runner.duplicate());
+            } else {
+                command.execute(runner);
+            }
         }
-    }
-
-    void push(CommandLine element) {
-        Debug.printf("Push: %s", element);
-        Objects.requireNonNull(element, "Cannot push null command line element");
-        commands.add(element);
-    }
-
-    List<CommandLine> getCommands() {
-        return List.copyOf(commands);
     }
 }

@@ -16,6 +16,8 @@ package org.adjective.x5.command;
 
 import java.util.List;
 
+import org.adjective.x5.cli.CommandLine;
+import org.adjective.x5.cli.CommandRunner;
 import org.adjective.x5.exception.X5Exception;
 import org.adjective.x5.types.X5Object;
 
@@ -23,6 +25,12 @@ public class EachCommand extends IterationCommand {
     @Override
     public String name() {
         return "each";
+    }
+
+    @Override
+    public void apply(CommandRunner runner, List<CommandLine> args) throws X5Exception {
+        requireArgumentCount(1, args);
+        super.apply(runner, args);
     }
 
     @Override
