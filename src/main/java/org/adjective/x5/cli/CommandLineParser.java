@@ -169,6 +169,7 @@ public class CommandLineParser {
             }).map(s -> {
                 switch (s.getType()) {
                     case X5Parser.Word:
+                    case X5Parser.Number:
                         return s.getText();
                     case X5Parser.QuotedWord:
                         return parseQuotedWord(s.getText());

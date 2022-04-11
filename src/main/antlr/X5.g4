@@ -50,7 +50,7 @@ operator: DOT | EQ | NEQ | QUEST | COLON;
 
 commandExpr: commandName commandArgs ;
 commandName: Word;
-commandArgs:  ( Word | QuotedWord )*;
+commandArgs:  ( Word | QuotedWord | Number )*;
 
 functionExpr: Word '(' functionArgs? ')';
 functionArgs: expr ( ',' expr )*;
