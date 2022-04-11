@@ -35,8 +35,8 @@ public class HexCommand extends AbstractCommand {
 
     @Override
     public void execute(Context context, ValueSet values, List<String> args) throws X5Exception {
-
         requireArgumentCount(0, 2, args);
+
         final String separator;
         final int numChars;
         if (args.size() >= 1) {
@@ -60,7 +60,9 @@ public class HexCommand extends AbstractCommand {
                 if (mod > 0) {
                     hexStr = "0".repeat(numChars - mod) + hexStr;
                 }
-                hexStr = Functions.insertSeparator(hexStr, separator, numChars).toString();
+                if(separator.length() > 0) {
+                    hexStr = Functions.insertSeparator(hexStr, separator, numChars).toString();
+                }
             }
             final X5String str = Values.string(hexStr, num.getSource().withDescriptionPrefix("hex format"));
             values.push(str);
