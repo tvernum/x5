@@ -48,7 +48,7 @@ public class X5Type<X extends X5Object> {
     public static final X5Type<PrivateCredential> PRIVATE_CREDENTIAL = new X5Type<>("Private Credential", PrivateCredential.class);
     public static final X5Type<PublicCredential> PUBLIC_CREDENTIAL = new X5Type<>("Public Credential", PublicCredential.class);
     public static final X5Type<JavaSecretKey> SECRET_KEY = new X5Type<>("Secret Key", JavaSecretKey.class);
-    public static final X5Type<CryptoValue> ANY_CRYPTO = new X5Type<>("Cryptographic Object", CryptoValue.class);
+    public static final X5Type<CryptoValue> ANY_CRYPTO = new X5Type<>("Cryptographic Object", CryptoValue.class, "crypto", "cryptographic");
 
     public static final X5Type<CryptoStore> STORE = new X5Type<>("Store", CryptoStore.class, "keystore", "key_store");
     public static final X5Type<StoreEntry> STORE_ENTRY = new X5Type<>("Store Entry", StoreEntry.class);
