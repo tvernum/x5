@@ -1,0 +1,6 @@
+seq( 
+    seq ( 1 , 2 , 3 ),
+    seq ("a","b","c")
+)
+    | each ( last )
+    | print
