@@ -193,6 +193,9 @@ public class CommandLineParser {
         }
 
         private String parseQuotedWord(String text) {
+            if(text.length() <= 2) {
+                return "";
+            }
             if (text.charAt(0) == '\'') {
                 if (text.length() <= 2) {
                     return "";
