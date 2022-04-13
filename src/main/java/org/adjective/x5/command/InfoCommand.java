@@ -35,29 +35,8 @@ public class InfoCommand extends AbstractCommand {
 
     @Override
     public void execute(Context context, ValueSet values, List<String> args) throws X5Exception {
-        switch (args.size()) {
-            case 0:
-                info(context, values.peek());
-                break;
-            case 1:
-                info(context, read(context, args.get(0), null));
-                break;
-            default:
-                boolean first = true;
-                for (String arg : args) {
-                    if (first) {
-                        first = false;
-                    } else {
-                        context.out().println();
-                    }
-                    context.out().println(": " + arg);
-                    info(context, read(context, arg, null));
-                }
-        }
-    }
-
-    private void info(Context context, X5File file) throws X5Exception {
-        info(context, file.info(), file.asObject());
+        requireArgumentCount(0, args);
+        info(context, values.peek());
     }
 
     private void info(Context context, X5Object obj) {
