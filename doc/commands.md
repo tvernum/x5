@@ -79,11 +79,142 @@ _Convert a number to a base 16 string with a ":" between every 3rd character_
 
 #### Stack 
 
-`first` will pop one object from the stack, and push one replacement object back onto the stack.
+`hex` will pop one object from the stack, and push one replacement object back onto the stack.
 
 #### Errors
 
-`first` will fail if the object at the top of the stack cannot be converted to a sequence, or if the sequence is empty.
+`hex` will fail if the object at the top of the stack cannot be converted to a number
+
+---
+
+### `info` - _Print summary information about an object_
+
+The `info` command prints information about the value at the top of the stack.
+
+The exact content will vary depending on the [type](types.md) of the object, but will include all the properties of the object (see the `property` command).
+
+#### Arguments
+
+`info` does not take any arguments
+
+#### Example
+
+_Display information about a certificate_
+
+```
+read server.crt | info
+```
+
+#### Stack
+
+`info` does not affect the stack
+
+#### Errors
+
+`info` will fail if the stack is empty
+
+--
+
+### `last` - _Extract the last value from a sequence_
+
+The `last` command pops a value from the stack, converts it to a sequence, extracts the last element from the sequence, and then pushes that to the stack
+
+#### Arguments
+
+`last` does not take any arguments
+
+#### Example
+
+_Read the last (CA) element from a certificate chain_
+
+```
+read chain.crt | last | info
+```
+
+#### Stack
+
+`last` will pop one object from the stack, and push one replacement object back onto the stack.
+
+#### Errors
+
+`last` will fail if the object at the top of the stack cannot be converted to a sequence, or if the sequence is empty.
+
+--
+
+### `property` - _Extract a property from an object_
+
+The `property` command pops an object from the stack, extracts a property from it, and then pushes the resulting object onto the stack.
+
+#### Arguments
+
+`property` takes one or more arguments. Each argument is a property to extract. The first property is extracted from the object on the top of the stack. Each subsequent property is extracted from the previous property value.
+
+#### Operators
+
+- The `.` operator can be used as an alias for the `property` command
+
+#### Example
+
+_Read an RSA key file and extract the private key_
+
+```
+read rsa.key | property private | info
+```
+
+_Read a certificate file and extract the subject and issuer_
+
+```
+read server.crt | seq ( .issuer, .subject ) | print
+```
+
+_Read a certificate file and extract the public key algorithm_
+
+```
+read server.crt | property key algorithm | print
+```
+
+_As above, using the `.` syntax_
+
+```
+read server.crt | .key.algorithm | print
+```
+
+#### Stack
+
+`property` will pop one object from the stack, and push one replacement object back onto the stack.
+
+#### Errors
+
+`property` will fail if the stack is empty, or if the object on top of that stack does not contain the specified property.
+
+--
+
+### `read` - _Read from a file_
+
+The `read` command reads from a file and pushes the resulting object onto the stack.
+
+The [type](types.md) of object that is pushed onto the stack varies based on the type of file that is read.
+
+
+#### Arguments
+
+`read` takes exactly one argument, the path to a file
+
+#### Example
+
+_Read a PEM file and print summary information to standard out_
+
+```
+read chain.crt | info
+```
+
+#### Stack
+
+`read` will push one object onto the stack.
+
+#### Errors
+
+`read` will fail if the specified file cannot be read, or is in an unsupported format.
 
 ## Functions
 
@@ -134,9 +265,52 @@ entry( "ca", read certificate_authority.crt )
 
 `entry` will push one object onto the stack (the StoreEntry)
 
-#### Errors
+--
 
-`entry` will fail if the object at the top of the stack cannot be converted to a sequence.
+### `pair`- _Construct a new key-pair_
+
+The `pair` function creates a new object of [type `KeyPair`](types.md), from the provided arguments
+
+#### Arguments
+
+`pair` takes exactly two arguments
+
+- A [`PrivateCredential`](types.md)
+- A [`PublicCredential`](types.md)
+
+These 2 arguments may be in either order 
+
+#### Example
+```
+pair( read ca.crt , read ca.key )
+```
+
+#### Stack
+
+`pair` will push one object onto the stack (the KeyPair)
+
+--
+
+### `seq`- _Construct a new sequence_
+
+The `seq` function creates a new object of [type `Sequence`](types.md), from the provided arguments
+
+#### Arguments
+
+`seq` takes 0 or more arguments
+
+#### Example
+```
+seq( "a", "b", "c" )
+```
+
+```
+seq( read ca.crt , read intermediate.crt, read leaf.crt ) | as CertificateChain
+```
+
+#### Stack
+
+`seq` will push one object onto the stack (the Sequence)
 
 -------
 
@@ -146,16 +320,10 @@ entry( "ca", read certificate_authority.crt )
 - `not-equals`
 - `filter`
 - `import` 
-- `info` 
 - `keystore`
-- `last`
 - `merge`
-- `pair`
 - `print`
-- `property`
-- `read`
 - `recurse`
 - `remove-password`
-- `seq`
 - `set-password`
 - `write`
