@@ -25,7 +25,7 @@ import org.adjective.x5.types.X5Object;
 import org.adjective.x5.types.X5StreamInfo;
 import org.adjective.x5.types.X5Type;
 
-public class JavaSecretKey implements JavaKey {
+public class JavaSecretKey implements JavaKey, X5SecretKey {
 
     private final SecretKey key;
     private final X5StreamInfo source;

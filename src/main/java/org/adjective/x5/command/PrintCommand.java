@@ -20,6 +20,7 @@ import org.adjective.x5.exception.X5Exception;
 import org.adjective.x5.types.Sequence;
 import org.adjective.x5.types.ToTextValue;
 import org.adjective.x5.types.X5Object;
+import org.adjective.x5.types.X5Type;
 
 public class PrintCommand extends AbstractCommand {
 
@@ -55,7 +56,7 @@ public class PrintCommand extends AbstractCommand {
             }
             return builder;
         } else {
-            return obj.description();
+            return obj.as(X5Type.ANY_VALUE).map(v -> v.toTextValue()).orElseGet(obj::description);
         }
     }
 

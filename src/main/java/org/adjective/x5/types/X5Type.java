@@ -26,6 +26,7 @@ import java.util.function.Predicate;
 
 import org.adjective.x5.io.encrypt.EncryptionInfo;
 import org.adjective.x5.types.crypto.JavaSecretKey;
+import org.adjective.x5.types.crypto.X5SecretKey;
 import org.adjective.x5.types.value.ASN1Value;
 import org.adjective.x5.types.value.Algorithm;
 import org.adjective.x5.types.value.DN;
@@ -47,16 +48,17 @@ public class X5Type<X extends X5Object> {
     public static final X5Type<KeyPair> KEY_PAIR = new X5Type<>("Key Pair", KeyPair.class, "pair");
     public static final X5Type<PrivateCredential> PRIVATE_CREDENTIAL = new X5Type<>("Private Credential", PrivateCredential.class);
     public static final X5Type<PublicCredential> PUBLIC_CREDENTIAL = new X5Type<>("Public Credential", PublicCredential.class);
-    public static final X5Type<JavaSecretKey> SECRET_KEY = new X5Type<>("Secret Key", JavaSecretKey.class);
+    public static final X5Type<X5SecretKey> SECRET_KEY = new X5Type<>("Secret Key", X5SecretKey.class);
     public static final X5Type<CryptoValue> ANY_CRYPTO = new X5Type<>("Cryptographic Object", CryptoValue.class, "crypto", "cryptographic");
 
     public static final X5Type<CryptoStore> STORE = new X5Type<>("Store", CryptoStore.class, "keystore", "key_store");
-    public static final X5Type<StoreEntry> STORE_ENTRY = new X5Type<>("Store Entry", StoreEntry.class);
+    public static final X5Type<StoreEntry> STORE_ENTRY = new X5Type<>("Store Entry", StoreEntry.class, "entry");
 
     public static final X5Type<Sequence> SEQUENCE = new X5Type<>("Sequence", Sequence.class);
     public static final X5Type<X5Record> RECORD = new X5Type<>("Record", X5Record.class);
     public static final X5Type<EncryptionInfo> ENCRYPTION = new X5Type<>("Encryption", EncryptionInfo.class);
 
+    public static final X5Type<X5Value> ANY_VALUE = new X5Type<>("Value", X5Value.class);
     public static final X5Type<X5Null> NULL = new X5Type<>("Null", X5Null.class);
     public static final X5Type<X5String> STRING = new X5Type<>("String", X5String.class);
     public static final X5Type<X5Number> NUMBER = new X5Type<>("Number", X5Number.class);
@@ -64,7 +66,12 @@ public class X5Type<X extends X5Object> {
     public static final X5Type<X5Date> DATE = new X5Type<>("Date", X5Date.class);
     public static final X5Type<Password> PASSWORD = new X5Type<>("Password", Password.class);
     public static final X5Type<Algorithm> ALGORITHM = new X5Type<>("Algorithm", Algorithm.class);
-    public static final X5Type<org.adjective.x5.types.value.OID> OID = new X5Type<>("OID", org.adjective.x5.types.value.OID.class);
+    public static final X5Type<org.adjective.x5.types.value.OID> OID = new X5Type<>(
+        "OID",
+        org.adjective.x5.types.value.OID.class,
+        "Object Id",
+        "Object Identifier"
+    );
     public static final X5Type<ASN1Value> ASN1 = new X5Type<>("ASN.1", ASN1Value.class, "asn1");
     public static final X5Type<DN> DISTINGUISHED_NAME = new X5Type<>("Distinguished Name", DN.class);
 
