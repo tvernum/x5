@@ -42,6 +42,7 @@ import joptsimple.OptionSpec;
 public class Main {
     private final OptionParser parser = new OptionParser();
 
+    private final OptionSpec<Void> helpOption = parser.acceptsAll(List.of("h", "help"), "Show help output");
     private final OptionSpec<Void> debugOption = parser.acceptsAll(List.of("debug"), "Show debugging output");
     private final OptionSpec<String> passwordFileOption = parser.acceptsAll(
         List.of("password-file"),
@@ -78,6 +79,10 @@ public class Main {
         PasswordSupplier passwordSupplier = new InteractivePasswordSupplier(environment);
 
         final OptionSet options = parser.parse(args);
+        if (options.has(helpOption)) {
+            parser.printHelpOn(System.out);
+            return;
+        }
         if (options.has(debugOption)) {
             Debug.enable();
         }
