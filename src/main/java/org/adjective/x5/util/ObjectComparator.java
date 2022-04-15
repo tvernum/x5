@@ -36,6 +36,7 @@ public class ObjectComparator implements Comparator<X5Object> {
         X5Type.ASN1,
         X5Type.DATE,
         X5Type.NULL,
+        X5Type.ANY_VALUE,
         X5Type.CERTIFICATE_CHAIN,
         X5Type.CERTIFICATE,
         X5Type.PUBLIC_KEY,

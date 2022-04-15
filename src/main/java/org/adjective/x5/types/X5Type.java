@@ -25,7 +25,6 @@ import java.util.Set;
 import java.util.function.Predicate;
 
 import org.adjective.x5.io.encrypt.EncryptionInfo;
-import org.adjective.x5.types.crypto.JavaSecretKey;
 import org.adjective.x5.types.crypto.X5SecretKey;
 import org.adjective.x5.types.value.ASN1Value;
 import org.adjective.x5.types.value.Algorithm;
@@ -91,6 +90,11 @@ public class X5Type<X extends X5Object> {
             this.name = properName;
         }
         VALUES.add(this);
+    }
+
+    @Override
+    public String toString() {
+        return name;
     }
 
     public static Collection<X5Type<?>> values() {
