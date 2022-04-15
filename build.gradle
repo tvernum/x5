@@ -68,3 +68,14 @@ application {
     getMainClass().set(project.ext.mainClass)
 }
 
+
+distributions {
+    main {
+        contents {
+            from('doc') {
+                into 'doc'
+            }
+        }
+    }
+}
+
