@@ -1,0 +1,5 @@
+                          Source : command-line::keystore()
+                     Object Type : Store
+
+                        entry.ec : KeyPair{PrivateKey,PublicKey} : Object #2 from pem/ec/ec-prime192v3.key
+--------------------------------   --------------------------------

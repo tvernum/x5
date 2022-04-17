@@ -267,6 +267,26 @@ entry( "ca", read certificate_authority.crt )
 
 --
 
+### `keystore`- _Construct a new keystore_ 
+
+The `keystore` function creates a new object of [type `Store`](types.md), from the provided arguments
+
+#### Arguments
+
+`keystore` takes any number of arguments. Each argument must be a [`StoreEntry`](types.md), or a [`Cryptographic Object`](types.md).
+If the argument is a `Cryptographic Object` a store entry is contructed dynamically, with a name derived from the cryptogaphic object.
+
+#### Example
+```
+keystore( entry( "ca", read certificate_authority.crt ), pair( read server.crt, read server.key ) )
+```
+
+#### Stack
+
+`keystore` will push one object onto the stack (the Store)
+
+--
+
 ### `pair`- _Construct a new key-pair_
 
 The `pair` function creates a new object of [type `KeyPair`](types.md), from the provided arguments
@@ -320,7 +340,6 @@ seq( read ca.crt , read intermediate.crt, read leaf.crt ) | as CertificateChain
 - `not-equals`
 - `filter`
 - `import` 
-- `keystore`
 - `merge`
 - `print`
 - `recurse`

@@ -28,8 +28,10 @@ import org.adjective.x5.io.PemOutput;
 import org.adjective.x5.types.X5Object;
 import org.adjective.x5.types.X5PublicKey;
 import org.adjective.x5.types.X5StreamInfo;
+import org.adjective.x5.types.value.Algorithm;
 import org.adjective.x5.util.Lazy;
-import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
+import org.adjective.x5.util.ObjectIdentifiers;
+import org.adjective.x5.util.Values;
 import org.bouncycastle.asn1.x509.SubjectPublicKeyInfo;
 
 public class PemPublicKey implements X5PublicKey {
@@ -37,19 +39,25 @@ public class PemPublicKey implements X5PublicKey {
     private final SubjectPublicKeyInfo key;
     private final X5StreamInfo source;
     private final Supplier<Map<String, X5Object>> properties;
+    private final Algorithm algorithm;
 
     public PemPublicKey(SubjectPublicKeyInfo key, X5StreamInfo source) {
         this.key = Objects.requireNonNull(key, "Null public key info");
         this.source = source;
+        this.algorithm = algorithm(key.getAlgorithm(), getSource().withDescriptionPrefix("algorithm for"));
         this.properties = Lazy.uncheckedLazy(() -> {
             Map<String, X5Object> map = new java.util.LinkedHashMap<>();
-            X5StreamInfo x = getSource().withDescriptionPrefix("algorithm for");
-            AlgorithmIdentifier a = key.getAlgorithm();
-            map.put("algorithm", algorithm(a, x));
+            map.put("algorithm", algorithm);
+            map.put("type", Values.string(getKeyType(), getSource()));
             addChildInfo(map, RSAKeyInfo.getAttributes(key, getSource()), "rsa");
             addChildInfo(map, ECKeyInfo.getAttributes(key, getSource()), "ec");
             return map;
         }).unchecked();
+    }
+
+    @Override
+    public String getKeyType() {
+        return ObjectIdentifiers.friendlyName(algorithm.oid()).orElse(algorithm.oid().value());
     }
 
     private void addChildInfo(Map<String, X5Object> map, Map<String, ? extends X5Object> childAttributes, String prefix) {

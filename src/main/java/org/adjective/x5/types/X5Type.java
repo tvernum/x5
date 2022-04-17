@@ -30,6 +30,7 @@ import org.adjective.x5.types.value.ASN1Value;
 import org.adjective.x5.types.value.Algorithm;
 import org.adjective.x5.types.value.DN;
 import org.adjective.x5.types.value.Password;
+import org.adjective.x5.types.value.RDN;
 import org.adjective.x5.types.value.X5Boolean;
 import org.adjective.x5.types.value.X5Date;
 import org.adjective.x5.types.value.X5Null;
@@ -72,7 +73,8 @@ public class X5Type<X extends X5Object> {
         "Object Identifier"
     );
     public static final X5Type<ASN1Value> ASN1 = new X5Type<>("ASN.1", ASN1Value.class, "asn1");
-    public static final X5Type<DN> DISTINGUISHED_NAME = new X5Type<>("Distinguished Name", DN.class);
+    public static final X5Type<DN> DISTINGUISHED_NAME = new X5Type<>("Distinguished Name", DN.class, "dn");
+    public static final X5Type RELATIVE_DISTINGUISHED_NAME = new X5Type("Relative Distinguished Name", RDN.class, "rdn");
 
     private final String name;
     private final Class<X> objectClass;

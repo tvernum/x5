@@ -17,18 +17,25 @@ package org.adjective.x5.types.value;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.adjective.x5.exception.X5Exception;
 import org.adjective.x5.io.IO;
 import org.adjective.x5.types.X5StreamInfo;
 import org.adjective.x5.types.X5Type;
 
-public class DN extends AbstractValueType<String> {
+public class RDN extends AbstractValueType<String> {
 
-    public DN(String value, X5StreamInfo source) {
+    private static final Pattern PATTERN = Pattern.compile("([^=]+)=(.*)");
+    private final List<String> attributeNames;
+    private final String attributeValue;
+
+    public RDN(String value, X5StreamInfo source) {
         super(value, source);
+        final Matcher matcher = PATTERN.matcher(value);
+        this.attributeNames = List.of(matcher.group(1).split("\\+"));
+        this.attributeValue = matcher.group(2);
     }
 
     @Override
@@ -39,7 +46,7 @@ public class DN extends AbstractValueType<String> {
 
     @Override
     public X5Type getType() {
-        return X5Type.DISTINGUISHED_NAME;
+        return X5Type.RELATIVE_DISTINGUISHED_NAME;
     }
 
     @Override
@@ -47,10 +54,11 @@ public class DN extends AbstractValueType<String> {
         IO.writeUtf8(value, out);
     }
 
-    public List<RDN> rdnList() {
-        // TODO correct DN parsing
-        return Stream.of(value().split(","))
-            .map(s -> new RDN(s, this.source.withDescriptionPrefix("rdn of")))
-            .collect(Collectors.toUnmodifiableList());
+    public List<String> getAttributeNames() {
+        return attributeNames;
+    }
+
+    public String getAttributeValue() {
+        return attributeValue;
     }
 }

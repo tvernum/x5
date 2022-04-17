@@ -28,6 +28,10 @@ public interface CryptoStore extends X5Object, EncryptedObject, Sequence {
 
     List<StoreEntry> entries() throws X5Exception;
 
+    default Optional<StoreEntry> findEntry(String name) throws X5Exception {
+        return entries().stream().filter(e -> e.name().equals(name)).findAny();
+    }
+
     void addEntry(StoreEntry entry, Optional<EncryptionInfo> encryption) throws X5Exception;
 
     @Override

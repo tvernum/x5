@@ -52,13 +52,18 @@ public abstract class AbstractFunction implements CommandLineFunction {
         }
         requireMinimumArgumentCount(index + 1, arguments);
         final X5Object result = eval(arguments.get(index), parentRunner);
-        return result.as(type)
-            .orElseThrow(
-                () -> new BadArgumentException(
-                    "Argument " + (index + 1) + " to the '" + name() + "' function must be of type " + type.name(),
-                    this
-                )
-            );
+        return asType(type, result, index);
+    }
+
+    protected <X extends X5Object> X asType(X5Type<X> asType, X5Object value, int argIndex) throws BadArgumentException {
+        return value.as(asType).orElseThrow(() -> badArgumentType(asType, argIndex));
+    }
+
+    protected <X extends X5Object> BadArgumentException badArgumentType(X5Type<X> expectedType, int argIndex) {
+        return new BadArgumentException(
+            "Argument " + (argIndex + 1) + " to the '" + name() + "' function must be of type " + expectedType.name(),
+            this
+        );
     }
 
     protected X5Object eval(CommandLine arg, CommandRunner parentRunner) throws X5Exception {

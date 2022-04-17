@@ -56,6 +56,11 @@ public class JavaPrivateKey implements X5PrivateKey, JavaKey {
         }).unchecked();
     }
 
+    @Override
+    public String getKeyType() {
+        return key.getAlgorithm();
+    }
+
     private Optional<EncodingSyntax> parseKeyFormat(String format) {
         // TODO more formats?
         if ("PKCS#8".equals(format)) {

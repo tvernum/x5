@@ -11,25 +11,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package org.adjective.x5.exception;
 
-package org.adjective.x5.types;
-
-import java.util.Arrays;
-
-import org.adjective.x5.exception.X5Exception;
-
-public interface X5PrivateKey extends X5Key, PrivateCredential, CryptoElement, BinaryEncoded {
-    @Override
-    default X5Type getType() {
-        return X5Type.PRIVATE_KEY;
-    }
-
-    @Override
-    default boolean isEqualTo(X5Object other) throws X5Exception {
-        if (other instanceof X5PrivateKey) {
-            return Arrays.equals(this.encodedValue(), ((X5PrivateKey) other).encodedValue());
-        } else {
-            return false;
-        }
+public class DuplicateEntryException extends X5Exception {
+    public DuplicateEntryException(String message) {
+        super(message);
     }
 }

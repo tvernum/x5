@@ -5,6 +5,7 @@
                      Object Type : PrivateKey
 
                        algorithm : 1.2.840.113549.1.1.1 [RSA (PKCS#1)] (Algorithm)
+                            type : RSA
                        encrypted : true
                       encryption : Encryption{DEK=AES-128-CBC}
 --------------------------------   --------------------------------

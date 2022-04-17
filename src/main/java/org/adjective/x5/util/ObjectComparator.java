@@ -31,6 +31,7 @@ public class ObjectComparator implements Comparator<X5Object> {
         X5Type.STRING,
         X5Type.PASSWORD,
         X5Type.DISTINGUISHED_NAME,
+        X5Type.RELATIVE_DISTINGUISHED_NAME,
         X5Type.ALGORITHM,
         X5Type.OID,
         X5Type.ASN1,

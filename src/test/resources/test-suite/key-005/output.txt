@@ -11,6 +11,7 @@
                      Object Type : PrivateKey
 
                        algorithm : 1.2.840.113549.1.1.1 [RSA (PKCS#1)] (Algorithm)
+                            type : RSA
                        encrypted : false
 --------------------------------   --------------------------------
                             Path : pem/intermediate1.pkcs8.key
@@ -20,5 +21,6 @@
                      Object Type : PrivateKey
 
                        algorithm : 1.2.840.113549.1.1.1 [RSA (PKCS#1)] (Algorithm)
+                            type : RSA
                        encrypted : false
 --------------------------------   --------------------------------

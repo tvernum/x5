@@ -1,0 +1,1 @@
+keystore( read pem/ec/ec-prime192v3.key | as KeyPair ) | info

@@ -34,6 +34,11 @@ public class JavaPublicKey implements X5PublicKey {
     }
 
     @Override
+    public String getKeyType() {
+        return key.getAlgorithm();
+    }
+
+    @Override
     public byte[] encodedValue() {
         return key.getEncoded();
     }

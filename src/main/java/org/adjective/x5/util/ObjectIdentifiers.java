@@ -28,6 +28,7 @@ import org.bouncycastle.asn1.x9.X9ObjectIdentifiers;
 public class ObjectIdentifiers {
 
     private static final Map<String, String> NAMES_BY_OID = new HashMap<>();
+    private static final Map<String, String> SHORT_NAME_BY_OID = new HashMap<>();
 
     static {
         // TODO - Need to add more of these
@@ -37,40 +38,60 @@ public class ObjectIdentifiers {
         define("PKCS#7", PKCSObjectIdentifiers.pkcs_7);
         define("PKCS#9", PKCSObjectIdentifiers.pkcs_9);
 
-        define("RSA (PKCS#1)", PKCSObjectIdentifiers.rsaEncryption);
-        define("MD2-with-RSA (PKCS#1)", PKCSObjectIdentifiers.md2WithRSAEncryption);
-        define("MD4-with-RSA (PKCS#1)", PKCSObjectIdentifiers.md4WithRSAEncryption);
-        define("MD5-with-RSA (PKCS#1)", PKCSObjectIdentifiers.md5WithRSAEncryption);
-        define("SHA1-with-RSA (PKCS#1)", PKCSObjectIdentifiers.sha1WithRSAEncryption);
-        define("SHA256-with-RSA (PKCS#1)", PKCSObjectIdentifiers.sha256WithRSAEncryption);
-        define("SHA384-with-RSA (PKCS#1)", PKCSObjectIdentifiers.sha384WithRSAEncryption);
-        define("SHA512-with-RSA (PKCS#1)", PKCSObjectIdentifiers.sha512WithRSAEncryption);
-        define("SHA512-224-with-RSA (PKCS#1)", PKCSObjectIdentifiers.sha512_224WithRSAEncryption);
-        define("SHA512-256-with-RSA (PKCS#1)", PKCSObjectIdentifiers.sha512_256WithRSAEncryption);
-        define("SHA224-with-RSA (PKCS#1)", PKCSObjectIdentifiers.sha224WithRSAEncryption);
-        define("PBE-SHA1-DES-CBS (PKCS#5)", PKCSObjectIdentifiers.pbeWithSHA1AndDES_CBC);
-        define("SHA1", OIWObjectIdentifiers.idSHA1);
+        define("RSA (PKCS#1)", PKCSObjectIdentifiers.rsaEncryption, "RSA");
+        define("MD2-with-RSA (PKCS#1)", PKCSObjectIdentifiers.md2WithRSAEncryption, "RSA+MD2");
+        define("MD4-with-RSA (PKCS#1)", PKCSObjectIdentifiers.md4WithRSAEncryption, "RSA+MD4");
+        define("MD5-with-RSA (PKCS#1)", PKCSObjectIdentifiers.md5WithRSAEncryption, "RSA+MD5");
+        define("SHA1-with-RSA (PKCS#1)", PKCSObjectIdentifiers.sha1WithRSAEncryption, "RSA+SHA1");
+        define("SHA256-with-RSA (PKCS#1)", PKCSObjectIdentifiers.sha256WithRSAEncryption, "RSA+SHA256");
+        define("SHA384-with-RSA (PKCS#1)", PKCSObjectIdentifiers.sha384WithRSAEncryption, "RSA+SHA384");
+        define("SHA512-with-RSA (PKCS#1)", PKCSObjectIdentifiers.sha512WithRSAEncryption, "RSA+SHA512");
+        define("SHA512-224-with-RSA (PKCS#1)", PKCSObjectIdentifiers.sha512_224WithRSAEncryption, "RSA+SHA512-224");
+        define("SHA512-256-with-RSA (PKCS#1)", PKCSObjectIdentifiers.sha512_256WithRSAEncryption, "RSA+SHA512-256");
+        define("SHA224-with-RSA (PKCS#1)", PKCSObjectIdentifiers.sha224WithRSAEncryption, "RSA+SHA224");
+        define("PBE-SHA1-DES-CBS (PKCS#5)", PKCSObjectIdentifiers.pbeWithSHA1AndDES_CBC, "DES+SHA1");
+        define("SHA1", OIWObjectIdentifiers.idSHA1, "SHA1");
         define("Friendly Name (PKCS#9)", PKCSObjectIdentifiers.pkcs_9_at_friendlyName);
         define("Local Key Id (PKCS#9)", PKCSObjectIdentifiers.pkcs_9_at_localKeyId);
-        define("EC Public Key (ANSI X9.62)", X9ObjectIdentifiers.id_ecPublicKey);
+        define("EC Public Key (ANSI X9.62)", X9ObjectIdentifiers.id_ecPublicKey, "EC");
         define("Extended Key Usage (X.509)", Extension.extendedKeyUsage);
         define("Any Key Usage (X.509)", Extension.extendedKeyUsage.branch("0"));
-        defineStr("TrustStore Tag (Oracle Ext)", "2.16.840.1.113894.746875.1.1");
+
+        defineStr("TrustStore Tag (Oracle Ext)", "TrustStore", "2.16.840.1.113894.746875.1.1");
     }
 
     private static void define(String name, ASN1ObjectIdentifier oid) {
-        String strId = oid.getId();
-        defineStr(name, strId);
+        define(name, oid, null);
     }
 
-    private static void defineStr(String name, String strId) {
-        if (NAMES_BY_OID.containsKey(strId)) {
+    private static void define(String name, ASN1ObjectIdentifier oid, String shortName) {
+        String strId = oid.getId();
+        defineStr(name, shortName, strId);
+    }
+
+    private static void defineStr(String name, String shortName, String strId) {
+        defineMap(name, strId, NAMES_BY_OID);
+        if (shortName != null) {
+            defineMap(shortName, strId, SHORT_NAME_BY_OID);
+        }
+    }
+
+    private static void defineMap(String name, String strId, Map<String, String> map) {
+        if (map.containsKey(strId)) {
             throw new IllegalArgumentException("OID " + strId + " is already defined");
         }
-        NAMES_BY_OID.put(strId, name);
+        map.put(strId, name);
     }
 
     public static Optional<String> name(OID oid) {
         return Optional.ofNullable(NAMES_BY_OID.get(oid.value()));
+    }
+
+    public static Optional<String> shortName(OID oid) {
+        return Optional.ofNullable(SHORT_NAME_BY_OID.get(oid.value()));
+    }
+
+    public static Optional<String> friendlyName(OID oid) {
+        return shortName(oid).or(() -> ObjectIdentifiers.name(oid));
     }
 }

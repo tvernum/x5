@@ -30,7 +30,9 @@ import org.adjective.x5.types.EncodingSyntax;
 import org.adjective.x5.types.X5Object;
 import org.adjective.x5.types.X5PrivateKey;
 import org.adjective.x5.types.X5StreamInfo;
+import org.adjective.x5.types.value.Algorithm;
 import org.adjective.x5.util.Lazy;
+import org.adjective.x5.util.ObjectIdentifiers;
 import org.adjective.x5.util.Values;
 import org.bouncycastle.asn1.pkcs.PrivateKeyInfo;
 
@@ -40,14 +42,17 @@ public class PemPrivateKey implements X5PrivateKey {
     private final X5StreamInfo source;
     private final EncryptionInfo encryption;
     private final Supplier<Map<String, X5Object>> properties;
+    private final Algorithm algorithm;
 
     public PemPrivateKey(PrivateKeyInfo key, X5StreamInfo source, EncryptionInfo encryption) {
         this.key = Objects.requireNonNull(key, "Key cannot be null");
         this.source = Objects.requireNonNull(source, "Source cannot be null");
         this.encryption = Objects.requireNonNull(encryption, "EncryptionInfo cannot be null");
+        this.algorithm = Values.algorithm(key.getPrivateKeyAlgorithm(), getSource().withDescriptionPrefix("algorithm for"));
         this.properties = Lazy.uncheckedLazy(() -> {
             Map<String, X5Object> map = new LinkedHashMap<>();
-            map.put("algorithm", Values.algorithm(key.getPrivateKeyAlgorithm(), getSource().withDescriptionPrefix("algorithm for")));
+            map.put("algorithm", algorithm);
+            map.put("type", Values.string(getKeyType(), getSource()));
             map.put("encrypted", Values.bool(encryption().isEncrypted(), getSource()));
             if (encryption().isEncrypted()) {
                 map.put("encryption", encryption());
@@ -55,6 +60,11 @@ public class PemPrivateKey implements X5PrivateKey {
             ECKeyInfo.getAttributes(key, getSource()).entrySet().forEach(e -> map.put("ec." + e.getKey(), e.getValue()));
             return map;
         }).unchecked();
+    }
+
+    @Override
+    public String getKeyType() {
+        return ObjectIdentifiers.friendlyName(algorithm.oid()).orElse(algorithm.oid().value());
     }
 
     public PrivateKeyInfo getKey() {

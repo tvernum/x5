@@ -90,6 +90,10 @@ public class JavaKeyStore implements CryptoStore {
         this.entries = entries;
     }
 
+    public KeyStore getKeyStore() {
+        return keyStore;
+    }
+
     @Override
     public void writeTo(OutputStream out) throws IOException, X5Exception {
         try {

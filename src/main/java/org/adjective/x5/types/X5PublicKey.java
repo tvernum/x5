@@ -14,7 +14,7 @@
 
 package org.adjective.x5.types;
 
-public interface X5PublicKey extends PublicCredential, CryptoElement, BinaryEncoded {
+public interface X5PublicKey extends PublicCredential, X5Key, BinaryEncoded {
 
     @Override
     default X5Type getType() {
