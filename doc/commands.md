@@ -207,14 +207,32 @@ _Read a PEM file and print summary information to standard out_
 ```
 read chain.crt | info
 ```
+--
+
+### `to` - _Convert file format or syntax_
+
+The `to` command attempts to convert the object at the top of a stack into a new file format or encoding sytax, as specified in the command argument.
+
+
+#### Arguments
+
+`to` takes exactly one argument, the format/syntax into which the object should be converted.
+
+#### Example
+
+_Convert a JKS keystore to PKCS#12_
+
+```
+read keystore.jks | to pkcs12 | write keystore.p12 
+```
 
 #### Stack
 
-`read` will push one object onto the stack.
+`to` will pop one object from the stack, and push one replacement object back onto the stack.
 
 #### Errors
 
-`read` will fail if the specified file cannot be read, or is in an unsupported format.
+`to` will fail if the object at the top of the stack cannot be converted to the specified format.
 
 ## Functions
 
