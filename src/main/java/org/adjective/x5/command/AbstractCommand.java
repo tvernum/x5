@@ -72,6 +72,6 @@ public abstract class AbstractCommand implements Command {
 
     @Override
     public String toString() {
-        return type() + ' ' + name();
+        return type() + " '" + name() + "'";
     }
 }
