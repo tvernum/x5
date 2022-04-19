@@ -41,6 +41,7 @@ public class Commands {
         put(new SetPasswordCommand());
         put(new RemovePasswordCommand());
         put(new ImportCommand());
+        put(new ToCommand());
         put(new AsCommand());
         put(new SeqFunction());
         put(new FirstCommand());

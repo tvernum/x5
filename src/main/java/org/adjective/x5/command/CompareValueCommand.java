@@ -21,7 +21,7 @@ import org.adjective.x5.exception.X5Exception;
 import org.adjective.x5.types.X5Object;
 import org.adjective.x5.util.Values;
 
-public class CompareValueCommand extends AbstractCommand {
+public class CompareValueCommand extends AbstractSimpleCommand {
 
     private final boolean equals;
 

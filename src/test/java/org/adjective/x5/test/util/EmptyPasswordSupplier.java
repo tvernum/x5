@@ -17,6 +17,7 @@ package org.adjective.x5.test.util;
 import java.io.IOException;
 import java.nio.file.Path;
 
+import org.adjective.x5.command.Command;
 import org.adjective.x5.io.password.PasswordSpec;
 import org.adjective.x5.io.password.PasswordSupplier;
 import org.adjective.x5.types.value.Password;
@@ -25,6 +26,11 @@ public class EmptyPasswordSupplier implements PasswordSupplier {
     @Override
     public Password get(Path path) {
         throw new IllegalArgumentException("No passwords available for path " + path);
+    }
+
+    @Override
+    public Password forCommand(Command command) {
+        throw new IllegalArgumentException("No passwords available for " + command);
     }
 
     @Override

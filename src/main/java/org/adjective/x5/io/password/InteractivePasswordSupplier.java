@@ -32,11 +32,6 @@ public class InteractivePasswordSupplier extends BasePasswordSupplier {
     }
 
     @Override
-    public Password get(Path path) {
-        return new Password(console.readPassword("Password for %s: ", path), SOURCE);
-    }
-
-    @Override
     protected Password input(String text) {
         return new Password(console.readPassword("Password for %s: ", text), SOURCE);
     }

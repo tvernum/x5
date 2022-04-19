@@ -16,17 +16,21 @@ package org.adjective.x5.command;
 
 import java.util.List;
 
-import org.adjective.x5.cli.CommandLine;
-import org.adjective.x5.cli.CommandRunner;
-import org.adjective.x5.exception.X5Exception;
+import org.adjective.x5.exception.BadArgumentException;
 
-public interface CommandLineFunction extends Command {
+public abstract class AbstractSimpleCommand extends AbstractCommand implements SimpleCommand {
 
-    @Override
-    default String type() {
-        return "function";
+    protected int integerArgument(List<String> args, int n) throws BadArgumentException {
+        requireArgumentCount(n + 1, args);
+        final String val = args.get(n);
+        try {
+            return Integer.parseInt(val);
+        } catch (NumberFormatException e) {
+            throw new BadArgumentException(
+                "Argument " + (n + 1) + " to the '" + name() + "' command must be an integer (found '" + val + "')",
+                this
+            );
+        }
     }
-
-    void apply(CommandRunner runner, List<CommandLine> args) throws X5Exception;
 
 }

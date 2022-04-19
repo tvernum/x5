@@ -25,7 +25,7 @@ import org.adjective.x5.types.X5File;
 import org.adjective.x5.types.X5Object;
 import org.adjective.x5.types.crypto.BasicStoreEntry;
 
-public class EntryCommand extends AbstractCommand {
+public class EntryCommand extends AbstractSimpleCommand {
 
     @Override
     public String name() {

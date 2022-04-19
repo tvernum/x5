@@ -25,6 +25,7 @@ import java.security.cert.Certificate;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -54,6 +55,7 @@ public class JavaKeyStore implements CryptoStore {
     private final KeyStore keyStore;
     private final X5StreamInfo source;
     private final EncryptionInfo encryption;
+    private final Map<String, EncryptionInfo> encryptionByEntry;
 
     private final Lazy<List<StoreEntry>, X5Exception> entries;
 
@@ -61,6 +63,7 @@ public class JavaKeyStore implements CryptoStore {
         this.keyStore = keyStore;
         this.source = source;
         this.encryption = encryption;
+        this.encryptionByEntry = new HashMap<>();
         this.entries = Lazy.lazy(() -> {
             try {
                 final List<StoreEntry> list = new ArrayList<>(keyStore.size());
@@ -83,11 +86,18 @@ public class JavaKeyStore implements CryptoStore {
         });
     }
 
-    private JavaKeyStore(KeyStore keyStore, X5StreamInfo source, EncryptionInfo encryption, Lazy<List<StoreEntry>, X5Exception> entries) {
+    private JavaKeyStore(
+        KeyStore keyStore,
+        X5StreamInfo source,
+        EncryptionInfo encryption,
+        Lazy<List<StoreEntry>, X5Exception> entries,
+        Map<String, EncryptionInfo> encryptionByEntry
+    ) {
         this.keyStore = keyStore;
         this.source = source;
         this.encryption = encryption;
         this.entries = entries;
+        this.encryptionByEntry = encryptionByEntry;
     }
 
     public KeyStore getKeyStore() {
@@ -136,12 +146,14 @@ public class JavaKeyStore implements CryptoStore {
 
     private void addKeyPair(String name, KeyPair pair, Optional<EncryptionInfo> encryption) throws X5Exception {
         try {
+            final EncryptionInfo entryEncryption = encryption.orElse(this.encryption);
             this.keyStore.setKeyEntry(
                 name,
                 JCAConversion.key(pair.privateCredential()),
-                encryption.orElse(this.encryption).password().chars(),
+                entryEncryption.password().chars(),
                 JCAConversion.chain(pair.publicCredential())
             );
+            this.encryptionByEntry.put(name, entryEncryption);
         } catch (KeyStoreException e) {
             throw new CryptoStoreException("Failed to store entry " + name + " of " + pair, e);
         }
@@ -161,9 +173,14 @@ public class JavaKeyStore implements CryptoStore {
     }
 
     @Override
+    public Optional<EncryptionInfo> getEncryption(StoreEntry entry) {
+        return Optional.ofNullable(encryptionByEntry.get(entry.name()));
+    }
+
+    @Override
     public JavaKeyStore withEncryption(EncryptionInfo withEncryption) throws X5Exception {
-        List<StoreEntry> entries = this.entries();
-        return new JavaKeyStore(keyStore, source, withEncryption, this.entries);
+        // TODO: Change key password if it's the same as the store encryption?
+        return new JavaKeyStore(keyStore, source, withEncryption, this.entries, this.encryptionByEntry);
     }
 
     private KeyStoreEntry certificateEntry(String name, Certificate certificate) {

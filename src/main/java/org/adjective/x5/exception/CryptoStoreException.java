@@ -14,10 +14,14 @@
 
 package org.adjective.x5.exception;
 
+import java.io.IOException;
 import java.security.GeneralSecurityException;
 
 public class CryptoStoreException extends X5Exception {
     public CryptoStoreException(String message, GeneralSecurityException cause) {
+        super(message, cause);
+    }
+    public CryptoStoreException(String message, IOException cause) {
         super(message, cause);
     }
 }

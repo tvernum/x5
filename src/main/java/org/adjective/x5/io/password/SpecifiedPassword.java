@@ -18,6 +18,7 @@ import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.nio.file.Path;
 
+import org.adjective.x5.command.Command;
 import org.adjective.x5.types.value.Password;
 
 public class SpecifiedPassword implements PasswordSupplier {
@@ -31,6 +32,15 @@ public class SpecifiedPassword implements PasswordSupplier {
 
     @Override
     public Password get(Path path) {
+        return defaultPassword();
+    }
+
+    @Override
+    public Password forCommand(Command command) {
+        return defaultPassword();
+    }
+
+    private Password defaultPassword() {
         try {
             return supplier.forSpec(defaultSpec);
         } catch (IOException e) {

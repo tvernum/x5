@@ -16,4 +16,5 @@ package org.adjective.x5.command;
 
 public interface Command {
     String name();
+    String type();
 }

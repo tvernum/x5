@@ -24,7 +24,7 @@ import org.adjective.x5.exception.FileWriteException;
 import org.adjective.x5.exception.X5Exception;
 import org.adjective.x5.types.X5Object;
 
-public class WriteCommand extends AbstractCommand {
+public class WriteCommand extends AbstractSimpleCommand {
     @Override
     public String name() {
         return "write";

@@ -26,7 +26,7 @@ import org.adjective.x5.types.value.X5String;
 import org.adjective.x5.util.Functions;
 import org.adjective.x5.util.Values;
 
-public class HexCommand extends AbstractCommand {
+public class HexCommand extends AbstractSimpleCommand {
 
     @Override
     public String name() {

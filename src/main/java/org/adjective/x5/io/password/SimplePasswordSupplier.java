@@ -17,6 +17,7 @@ package org.adjective.x5.io.password;
 import java.io.IOException;
 import java.nio.file.Path;
 
+import org.adjective.x5.command.Command;
 import org.adjective.x5.types.value.Password;
 import org.adjective.x5.util.Values;
 
@@ -38,6 +39,11 @@ public class SimplePasswordSupplier implements PasswordSupplier {
 
     @Override
     public Password get(Path path) {
+        return password;
+    }
+
+    @Override
+    public Password forCommand(Command command) {
         return password;
     }
 }

@@ -19,12 +19,11 @@ import java.util.Map;
 import java.util.Optional;
 
 import org.adjective.x5.exception.X5Exception;
-import org.adjective.x5.types.X5File;
 import org.adjective.x5.types.X5Object;
 import org.adjective.x5.types.X5StreamInfo;
 import org.adjective.x5.types.X5Value;
 
-public class InfoCommand extends AbstractCommand {
+public class InfoCommand extends AbstractSimpleCommand {
 
     public static final String END_LINE = "-".repeat(32) + "   " + "-".repeat(32);
 

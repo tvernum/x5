@@ -23,7 +23,7 @@ import org.adjective.x5.io.encrypt.Unencrypted;
 import org.adjective.x5.types.X5Object;
 import org.adjective.x5.types.crypto.EncryptedObject;
 
-public class RemovePasswordCommand extends AbstractCommand {
+public class RemovePasswordCommand extends AbstractSimpleCommand {
 
     @Override
     public String name() {

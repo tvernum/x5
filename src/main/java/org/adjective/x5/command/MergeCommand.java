@@ -23,7 +23,7 @@ import org.adjective.x5.types.CryptoStore;
 import org.adjective.x5.types.StoreEntry;
 import org.adjective.x5.types.X5Object;
 
-public class MergeCommand extends AbstractCommand {
+public class MergeCommand extends AbstractSimpleCommand {
 
     @Override
     public String name() {

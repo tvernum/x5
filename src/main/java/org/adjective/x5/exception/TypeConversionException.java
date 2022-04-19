@@ -14,11 +14,16 @@
 
 package org.adjective.x5.exception;
 
+import org.adjective.x5.types.FileType;
 import org.adjective.x5.types.X5Object;
 import org.adjective.x5.types.X5Type;
 
 public class TypeConversionException extends X5Exception {
     public TypeConversionException(X5Object value, X5Type type) {
         super("Cannot convert " + value.description() + " of type " + value.getTypeName() + " to " + type.name());
+    }
+
+    public TypeConversionException(X5Object value, FileType type) {
+        super("Cannot convert " + value.description() + " to type " + type.name());
     }
 }

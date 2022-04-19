@@ -34,6 +34,8 @@ public interface CryptoStore extends X5Object, EncryptedObject, Sequence {
 
     void addEntry(StoreEntry entry, Optional<EncryptionInfo> encryption) throws X5Exception;
 
+    Optional<EncryptionInfo> getEncryption(StoreEntry entry);
+
     @Override
     default Map<String, X5Object> properties() {
         try {

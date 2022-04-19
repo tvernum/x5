@@ -67,7 +67,7 @@ public class SimpleKeyStore implements CryptoStore {
             throw new DuplicateEntryException("Store entry '" + entry.name() + "' already exists");
         }
         entries.add(entry);
-        encryption.ifPresent(e -> entryEncryption.put(entry, e));
+        entryEncryption.put(entry, encryption.orElse(storeEncryption));
     }
 
     @Override
@@ -77,12 +77,17 @@ public class SimpleKeyStore implements CryptoStore {
 
     @Override
     public void writeTo(OutputStream out) throws IOException, X5Exception {
-
+        // TODO
     }
 
     @Override
     public EncryptionInfo encryption() {
         return this.storeEncryption;
+    }
+
+    @Override
+    public Optional<EncryptionInfo> getEncryption(StoreEntry entry) {
+        return Optional.ofNullable(this.entryEncryption.get(entry));
     }
 
     @Override

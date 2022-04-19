@@ -22,7 +22,7 @@ import org.adjective.x5.types.ToTextValue;
 import org.adjective.x5.types.X5Object;
 import org.adjective.x5.types.X5Type;
 
-public class PrintCommand extends AbstractCommand {
+public class PrintCommand extends AbstractSimpleCommand {
 
     @Override
     public String name() {

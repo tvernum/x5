@@ -26,7 +26,7 @@ import org.adjective.x5.types.X5Object;
 import org.adjective.x5.types.crypto.EncryptedObject;
 import org.adjective.x5.types.value.Password;
 
-public class SetPasswordCommand extends AbstractCommand {
+public class SetPasswordCommand extends AbstractSimpleCommand {
 
     @Override
     public String name() {

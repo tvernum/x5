@@ -46,4 +46,13 @@ public interface X5StreamInfo {
         };
 
     }
+
+    default X5StreamInfo withFileType(FileType fileType) {
+        return new DelegateInfo(this) {
+            @Override
+            public Optional<FileType> getFileType() {
+                return Optional.of(fileType);
+            }
+        };
+    };
 }

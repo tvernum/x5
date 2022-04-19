@@ -22,7 +22,7 @@ import org.adjective.x5.exception.X5Exception;
 import org.adjective.x5.types.Sequence;
 import org.adjective.x5.types.X5Object;
 
-public class FirstCommand extends AbstractCommand {
+public class FirstCommand extends AbstractSimpleCommand {
 
     @Override
     public String name() {

@@ -25,7 +25,7 @@ import org.adjective.x5.types.ObjectSequence;
 import org.adjective.x5.types.Sequence;
 import org.adjective.x5.types.X5Object;
 
-public class RecurseCommand extends AbstractCommand {
+public class RecurseCommand extends AbstractSimpleCommand {
     @Override
     public String name() {
         return "recurse";

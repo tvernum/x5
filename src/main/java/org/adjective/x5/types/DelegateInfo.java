@@ -44,4 +44,6 @@ public abstract class DelegateInfo implements X5StreamInfo {
     public Optional<EncodingSyntax> getSyntax() {
         return delegate.getSyntax();
     }
+
+
 }

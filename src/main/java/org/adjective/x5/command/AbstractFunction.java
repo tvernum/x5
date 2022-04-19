@@ -21,29 +21,9 @@ import org.adjective.x5.cli.CommandRunner;
 import org.adjective.x5.exception.BadArgumentException;
 import org.adjective.x5.exception.X5Exception;
 import org.adjective.x5.types.X5Object;
-import org.adjective.x5.types.X5StreamInfo;
 import org.adjective.x5.types.X5Type;
-import org.adjective.x5.util.Values;
 
-public abstract class AbstractFunction implements CommandLineFunction {
-
-    protected void requireArgumentCount(int required, List<?> args) throws BadArgumentException {
-        if (args.size() != required) {
-            throw new BadArgumentException(
-                "The '" + name() + "' function requires exactly " + required + " argument" + (required == 1 ? "" : "s"),
-                this
-            );
-        }
-    }
-
-    protected void requireMinimumArgumentCount(int minRequired, List<?> args) throws BadArgumentException {
-        if (args.size() < minRequired) {
-            throw new BadArgumentException(
-                "The '" + name() + "' function requires at least " + minRequired + " argument" + (minRequired == 1 ? "" : "s"),
-                this
-            );
-        }
-    }
+public abstract class AbstractFunction extends AbstractCommand implements CommandLineFunction {
 
     protected <X extends X5Object> X evaluateArgument(int index, X5Type<X> type, CommandRunner parentRunner, List<CommandLine> arguments)
         throws X5Exception {
@@ -70,9 +50,5 @@ public abstract class AbstractFunction implements CommandLineFunction {
         var childRunner = parentRunner.duplicate();
         arg.execute(childRunner);
         return childRunner.getValues().peek();
-    }
-
-    protected X5StreamInfo getSource() {
-        return Values.source("command-line::" + name() + "()");
     }
 }

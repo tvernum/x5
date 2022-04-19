@@ -96,13 +96,13 @@ public class FileParser {
         if (byte0 == 0x30 && (byte1 == (byte) 0x82 || byte1 == 0x56)) {
             return readPkcs12(in, file, passwordSupplier);
         }
-        if (byte0 == 0xFE && byte1 == 0xED) {
+        if (byte0 == (byte)0xFE && byte1 == (byte)0xED) {
             return readJks(in, file, passwordSupplier);
         }
         if (containsBytes(headerBytes, PEM_MARKER1) || containsBytes(headerBytes, PEM_MARKER2)) {
             return readPem(in, file, passwordSupplier);
         }
-        Debug.printf("Cannot parse header bytes: [%s]", Hex.toHexString(headerBytes));
+        Debug.printf("Cannot parse header bytes: [%s] (%x,%x)", Hex.toHexString(headerBytes), byte0, byte1);
         // TODO DER/BER/raw-Base64
         throw new UnsupportedFileTypeException(file.path());
     }

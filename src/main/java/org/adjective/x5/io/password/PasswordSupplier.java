@@ -17,10 +17,15 @@ package org.adjective.x5.io.password;
 import java.io.IOException;
 import java.nio.file.Path;
 
+import org.adjective.x5.command.Command;
+import org.adjective.x5.command.ToCommand;
 import org.adjective.x5.types.value.Password;
 
 public interface PasswordSupplier {
     Password get(Path path);
 
+    Password forCommand(Command command);
+
     Password forSpec(PasswordSpec spec) throws IOException;
+
 }

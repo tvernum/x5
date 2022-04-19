@@ -29,7 +29,7 @@ import joptsimple.OptionSet;
 import joptsimple.OptionSpec;
 import joptsimple.OptionSpecBuilder;
 
-public abstract class CommandWithOptions extends AbstractCommand {
+public abstract class CommandWithOptions extends AbstractSimpleCommand {
 
     private final OptionParser parser = new OptionParser();
     private final NonOptionArgumentSpec<String> arguments = parser.nonOptions("args");

@@ -11,7 +11,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.adjective.x5.command;
 
 import java.io.FileNotFoundException;
@@ -22,41 +21,37 @@ import org.adjective.x5.exception.BadArgumentException;
 import org.adjective.x5.exception.FileReadException;
 import org.adjective.x5.io.password.PasswordSpec;
 import org.adjective.x5.types.X5File;
+import org.adjective.x5.types.X5StreamInfo;
+import org.adjective.x5.util.Values;
 
-public abstract class AbstractCommand implements SimpleCommand {
+public abstract class AbstractCommand implements Command {
 
-    protected void requireArgumentCount(int required, List<String> args) throws BadArgumentException {
+    protected boolean isFunction() {
+        return this instanceof CommandLineFunction;
+    }
+
+    protected void requireArgumentCount(int required, List<?> args) throws BadArgumentException {
         if (args.size() != required) {
             throw new BadArgumentException(
-                "The '" + name() + "' command requires exactly " + required + " argument" + (required == 1 ? "" : "s"),
+                "The '" + name() + "' " + type() + " requires exactly " + required + " argument" + (required == 1 ? "" : "s"),
                 this
             );
         }
     }
 
-    protected void requireArgumentCount(int min, int max, List<String> args) throws BadArgumentException {
+    protected void requireArgumentCount(int min, int max, List<?> args) throws BadArgumentException {
         if (args.size() < min || args.size() > max) {
-            throw new BadArgumentException("The '" + name() + "' command requires between " + min + " and " + max + " arguments", this);
+            throw new BadArgumentException(
+                "The '" + name() + "' " + type() + " requires between " + min + " and " + max + " arguments",
+                this
+            );
         }
     }
 
-    protected void requireMinimumArgumentCount(int minRequired, List<String> args) throws BadArgumentException {
+    protected void requireMinimumArgumentCount(int minRequired, List<?> args) throws BadArgumentException {
         if (args.size() < minRequired) {
             throw new BadArgumentException(
-                "The '" + name() + "' command requires at least " + minRequired + " argument" + (minRequired == 1 ? "" : "s"),
-                this
-            );
-        }
-    }
-
-    protected int integerArgument(List<String> args, int n) throws BadArgumentException {
-        requireArgumentCount(n + 1, args);
-        final String val = args.get(n);
-        try {
-            return Integer.parseInt(val);
-        } catch (NumberFormatException e) {
-            throw new BadArgumentException(
-                "Argument " + (n + 1) + " to the '" + name() + "' command must be an integer (found '" + val + "')",
+                "The '" + name() + "' " + type() + " requires at least " + minRequired + " argument" + (minRequired == 1 ? "" : "s"),
                 this
             );
         }
@@ -69,5 +64,14 @@ public abstract class AbstractCommand implements SimpleCommand {
         } catch (FileNotFoundException e) {
             throw new FileReadException(path, e);
         }
+    }
+
+    protected X5StreamInfo getSource() {
+        return Values.source("command-line::" + name() + (isFunction() ? "()" : ""));
+    }
+
+    @Override
+    public String toString() {
+        return type() + ' ' + name();
     }
 }

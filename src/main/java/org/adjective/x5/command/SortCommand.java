@@ -27,7 +27,7 @@ import org.adjective.x5.types.Sequence;
 import org.adjective.x5.types.X5Object;
 import org.adjective.x5.util.ObjectComparator;
 
-public class SortCommand extends AbstractCommand {
+public class SortCommand extends AbstractSimpleCommand {
 
     @Override
     public String name() {

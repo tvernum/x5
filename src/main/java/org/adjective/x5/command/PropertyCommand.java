@@ -24,7 +24,7 @@ import org.adjective.x5.exception.ValueSetException;
 import org.adjective.x5.exception.X5Exception;
 import org.adjective.x5.types.X5Object;
 
-public class PropertyCommand extends AbstractCommand {
+public class PropertyCommand extends AbstractSimpleCommand {
     @Override
     public String name() {
         return "property";

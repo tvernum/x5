@@ -21,6 +21,11 @@ import org.adjective.x5.exception.X5Exception;
 
 public interface SimpleCommand extends Command {
 
+    @Override
+    default String type() {
+        return "command";
+    }
+
     void execute(Context context, ValueSet values, List<String> args) throws X5Exception, IOException;
 
 }

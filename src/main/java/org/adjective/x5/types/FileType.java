@@ -14,10 +14,34 @@
 
 package org.adjective.x5.types;
 
+import java.util.Locale;
+import java.util.Optional;
+
 public enum FileType {
     PEM,
     PKCS12,
     JKS,
     TEXT,
-    UNSPECIFIED
+    UNSPECIFIED;
+
+    public static Optional<FileType> parse(String name) {
+        switch (name.toLowerCase(Locale.ROOT)) {
+            case "pem":
+                return Optional.of(PEM);
+            case "pkcs12":
+            case "pkcs#12":
+            case "pfx":
+            case "p12":
+                return Optional.of(PKCS12);
+            case "jks":
+                return Optional.of(JKS);
+            case "txt":
+            case "text":
+                return Optional.of(TEXT);
+            case "unspecified":
+            case "unknown":
+                return Optional.of(UNSPECIFIED);
+        }
+        return Optional.empty();
+    }
 }

@@ -32,13 +32,20 @@ import org.adjective.x5.types.value.Password;
 
 public class FilePasswordSupplier extends BasePasswordSupplier {
     private final Map<String, Password> passwords;
+    private final String source;
 
     public FilePasswordSupplier(Environment environment, Iterable<Path> files) throws IOException {
         super(environment);
         this.passwords = new LinkedHashMap<>();
+        var str = new StringBuilder();
         for (Path path : files) {
             read(path);
+            if (str.length() > 0) {
+                str.append(',');
+            }
+            str.append(path);
         }
+        this.source = str.toString();
     }
 
     public FilePasswordSupplier(Environment environment, List<String> fileNames) throws IOException {
@@ -77,14 +84,16 @@ public class FilePasswordSupplier extends BasePasswordSupplier {
 
     private Optional<Password> lookup(String lookupValue) {
         if (passwords.containsKey(lookupValue)) {
+            Debug.printf("[%s] Lookup key '%s' exists", this, lookupValue);
             return Optional.of(passwords.get(lookupValue));
         }
         for (String key : passwords.keySet()) {
             if (match(key, lookupValue)) {
-                Debug.printf("Lookup %s matches password entry '%s'", lookupValue, key);
+                Debug.printf("[%s] Lookup %s matches password entry '%s'", this, lookupValue, key);
                 return Optional.of(passwords.get(key));
             }
         }
+        Debug.printf("[%s] No value for lookup '%s'", this, lookupValue);
         return Optional.empty();
     }
 
@@ -111,5 +120,10 @@ public class FilePasswordSupplier extends BasePasswordSupplier {
         throw new IllegalStateException(
             "Bad file pattern " + configKey + " at " + passwords.get(configKey).getSource().getSourceDescription()
         );
+    }
+
+    @Override
+    public String toString() {
+        return "password-file " + source;
     }
 }
