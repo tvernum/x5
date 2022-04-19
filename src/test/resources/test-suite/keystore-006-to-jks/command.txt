@@ -1,0 +1,1 @@
+read keystore/simple.p12 | to jks | write tmp/simple.jks ; read -p "=password" tmp/simple.jks | info

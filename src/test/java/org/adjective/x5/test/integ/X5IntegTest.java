@@ -19,6 +19,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.UncheckedIOException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Files;
@@ -30,15 +31,14 @@ import java.util.stream.Collectors;
 
 import org.adjective.x5.TestRunner;
 import org.adjective.x5.command.Environment;
+import org.adjective.x5.io.BaseFileSystem;
 import org.adjective.x5.io.password.FilePasswordSupplier;
 import org.adjective.x5.io.password.PasswordSpec;
 import org.adjective.x5.io.password.PasswordSupplier;
+import org.adjective.x5.test.util.ShadowedFile;
 import org.adjective.x5.types.X5File;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
-
-import org.adjective.x5.io.BaseFileSystem;
-import org.adjective.x5.test.util.ShadowedFile;
 
 class X5IntegTest {
 
@@ -56,11 +56,28 @@ class X5IntegTest {
 
     private static Path createOutputDirectory() {
         try {
-            return Files.createTempDirectory(X5IntegTest.class.getSimpleName());
+            final Path dirs = Files.createTempDirectory(X5IntegTest.class.getSimpleName());
+            wipe(dirs);
+            return dirs;
         } catch (IOException e) {
             e.printStackTrace();
             return null;
         }
+    }
+
+    private static void wipe(Path path) throws IOException {
+        Files.list(path).forEach(p -> {
+            try {
+                if (Files.isDirectory(p)) {
+                    wipe(p);
+                } else {
+                    Files.deleteIfExists(p);
+                }
+            } catch (IOException e) {
+                throw new UncheckedIOException(e);
+            }
+        });
+
     }
 
     private static Path getParentDirectory(String fileName) {
@@ -131,7 +148,13 @@ class X5IntegTest {
 
         @Override
         public X5File read(Path requestedPath, PasswordSpec password) throws FileNotFoundException {
-            final Path resolvedPath = samplesDirectory.resolve(requestedPath);
+            Path resolvedPath = samplesDirectory.resolve(requestedPath);
+            if (Files.exists(resolvedPath) == false) {
+                final Path outputPath = outputDirectory.resolve(requestedPath);
+                if (Files.exists(outputPath)) {
+                    resolvedPath = outputPath;
+                }
+            }
             checkReadable(resolvedPath);
             final PasswordSupplier passwords = resolvePasswordSupplier(password);
             return new ShadowedFile(resolvedPath, requestedPath, passwords);
@@ -139,7 +162,11 @@ class X5IntegTest {
 
         @Override
         public OutputStream writeTo(Path requestedPath, boolean overwrite) throws IOException {
-            Path resolvedPath = outputDirectory.resolve(requestedPath);
+            final Path resolvedPath = outputDirectory.resolve(requestedPath);
+            final Path parent = resolvedPath.getParent();
+            if (Files.exists(parent) == false) {
+                Files.createDirectory(parent);
+            }
             return super.writeTo(resolvedPath, overwrite);
         }
     }

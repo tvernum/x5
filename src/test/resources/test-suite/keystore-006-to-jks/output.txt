@@ -1,0 +1,7 @@
+                            Path : tmp/simple.jks
+                          Source : tmp/simple.jks
+                       File Type : JKS
+                     Object Type : Store
+
+                    entry.sample : KeyPair{PrivateKey,CertificateChain} : Entry[sample] in tmp/simple.jks
+--------------------------------   --------------------------------

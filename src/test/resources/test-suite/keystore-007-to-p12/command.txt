@@ -1,0 +1,3 @@
+read keystore/multiple-keys.jks | to pkcs12 | write tmp/multiple-keys.p12
+ ;
+read -p "=jks-keystore" tmp/multiple-keys.p12 | each ( .name ) | sort | print
