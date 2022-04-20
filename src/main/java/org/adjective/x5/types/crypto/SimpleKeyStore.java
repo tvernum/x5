@@ -22,7 +22,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import org.adjective.x5.command.ToCommand;
 import org.adjective.x5.exception.DuplicateEntryException;
+import org.adjective.x5.exception.InvalidTargetException;
 import org.adjective.x5.exception.X5Exception;
 import org.adjective.x5.io.encrypt.EncryptionInfo;
 import org.adjective.x5.io.encrypt.Unencrypted;
@@ -77,7 +79,10 @@ public class SimpleKeyStore implements CryptoStore {
 
     @Override
     public void writeTo(OutputStream out) throws IOException, X5Exception {
-        // TODO
+        throw new InvalidTargetException(
+            this,
+            "Cannot write an in-memory keystore to disk - use the `" + ToCommand.NAME + "` command to convert it to PKCS#12 or JKS first"
+        );
     }
 
     @Override

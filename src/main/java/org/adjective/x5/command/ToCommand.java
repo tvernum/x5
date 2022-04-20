@@ -43,9 +43,11 @@ import org.bouncycastle.pkcs.bc.BcPKCS12MacCalculatorBuilder;
 
 public class ToCommand extends AbstractSimpleCommand {
 
+    public static final String NAME = "to";
+
     @Override
     public String name() {
-        return "to";
+        return NAME;
     }
 
     @Override
@@ -92,14 +94,14 @@ public class ToCommand extends AbstractSimpleCommand {
     }
 
     private CryptoStore toJks(CryptoStore originalStore, Context context) throws X5Exception {
-        return convertJavaKeysStore(originalStore, context, "JKS", (ks, password) -> {
+        return convertJavaKeystore(originalStore, context, "JKS", (ks, password) -> {
             final EncryptionInfo encryption = new JksEncryptionInfo(this.getSource(), password);
             return new JavaKeyStore(ks, originalStore.getSource().withDescriptionPrefix("to-jks").withFileType(FileType.JKS), encryption);
         });
     }
 
     private CryptoStore toPkcs12(CryptoStore originalStore, Context context) throws X5Exception {
-        return convertJavaKeysStore(originalStore, context, "pkcs12", (ks, password) -> {
+        return convertJavaKeystore(originalStore, context, "pkcs12", (ks, password) -> {
             try {
                 final Pkcs12EncryptionInfo encryption = new Pkcs12EncryptionInfo(this.getSource(), OIWObjectIdentifiers.idSHA1, password);
                 final PKCS12PfxPdu pfx = new PKCS12PfxPduBuilder()
@@ -116,7 +118,7 @@ public class ToCommand extends AbstractSimpleCommand {
         });
     }
 
-    private JavaKeyStore convertJavaKeysStore(
+    private JavaKeyStore convertJavaKeystore(
         CryptoStore originalStore,
         Context context,
         String ksType,
