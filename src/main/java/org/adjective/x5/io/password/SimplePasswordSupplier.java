@@ -33,7 +33,7 @@ public class SimplePasswordSupplier implements PasswordSupplier {
     }
 
     @Override
-    public Password forSpec(PasswordSpec spec) throws IOException {
+    public Password forSpec(PasswordSpec spec) {
         return password;
     }
 

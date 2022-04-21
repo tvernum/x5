@@ -196,6 +196,12 @@ The `read` command reads from a file and pushes the resulting object onto the st
 The [type](types.md) of object that is pushed onto the stack varies based on the type of file that is read.
 
 
+#### Options
+
+`read` has one optional argument:
+
+- `-p`, `--password` - Apply the specified [password](passwords.md) when reading from the specified file
+
 #### Arguments
 
 `read` takes exactly one argument, the path to a file
@@ -207,6 +213,42 @@ _Read a PEM file and print summary information to standard out_
 ```
 read chain.crt | info
 ```
+--
+
+### `set-password` - _Change the password on an encrypted object_
+
+The `set-password` changes the password on the object at the top of the stack.
+
+Strictly speaking it pops the existing object from the stack, creates a cloned object with a new password,
+and pushes that new object to the stack.
+
+#### Options
+
+`set-password` has one optional argument:
+
+- `-r`, `--recurse` - If the target object is a keystore, also change the password for any key entries
+ (provided those entries previously used the same password as the keystore itself).
+ 
+#### Arguments
+
+`set-password` takes exactly one argument, the [password](passwords.md) to apply to the object
+
+#### Example
+
+_Change the password on a PKCS#12 keystore_
+
+```
+read -p "=old-password" keystore.p12 | set-password -r "=new-password" | write updated-keystore.p12
+```
+
+#### Stack
+
+`set-password` will pop one object from the stack, and push one replacement object back on the stack.
+
+#### Errors
+
+`set-password` will fail if the object at the top of the stack is not an encryptable object.
+
 --
 
 ### `to` - _Convert file format or syntax_
@@ -362,5 +404,4 @@ seq( read ca.crt , read intermediate.crt, read leaf.crt ) | as CertificateChain
 - `print`
 - `recurse`
 - `remove-password`
-- `set-password`
 - `write`

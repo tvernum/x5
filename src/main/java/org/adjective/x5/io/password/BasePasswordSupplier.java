@@ -57,9 +57,14 @@ public abstract class BasePasswordSupplier implements PasswordSupplier {
                 return new Password(env, Values.source("environment." + spec.text()));
             case LITERAL:
                 return new Password(spec.text(), Values.source("password literal"));
-            case FILE:
-                Path path = Paths.get(spec.text());
-                return new Password(Files.readString(path), new PathInfo(path, 0, FileType.TEXT));
+            case FILE: {
+                final Path path = Paths.get(spec.text());
+                String value = Files.readString(path);
+                if (value.endsWith(System.lineSeparator())) {
+                    value = value.substring(0, value.length() - System.lineSeparator().length());
+                }
+                return new Password(value, new PathInfo(path, 0, FileType.TEXT));
+            }
             case INPUT:
                 return this.input(spec.text());
             default:
