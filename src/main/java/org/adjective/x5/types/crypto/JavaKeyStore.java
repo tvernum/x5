@@ -24,7 +24,6 @@ import java.security.PrivateKey;
 import java.security.cert.Certificate;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -47,8 +46,10 @@ import org.adjective.x5.types.StoreEntry;
 import org.adjective.x5.types.X5Object;
 import org.adjective.x5.types.X5StreamInfo;
 import org.adjective.x5.types.value.OID;
+import org.adjective.x5.util.KeyStoreIterator;
 import org.adjective.x5.util.Lazy;
 import org.adjective.x5.util.ObjectIdentifiers;
+import org.adjective.x5.util.Tuple;
 import org.adjective.x5.util.Values;
 
 public class JavaKeyStore implements CryptoStore {
@@ -60,23 +61,31 @@ public class JavaKeyStore implements CryptoStore {
     private final Lazy<List<StoreEntry>, X5Exception> entries;
 
     public JavaKeyStore(KeyStore keyStore, X5StreamInfo source, EncryptionInfo encryption) {
+        this(keyStore, source, encryption, new HashMap<>());
+    }
+
+    private EncryptionInfo getKeyEncryption(KeyStoreIterator.Entry entry) {
+        return encryptionByEntry.getOrDefault(entry.getAlias(), encryption);
+    }
+
+    protected JavaKeyStore(KeyStore keyStore, X5StreamInfo source, EncryptionInfo encryption, Map<String, EncryptionInfo> encryptionByEntry) {
         this.keyStore = keyStore;
         this.source = source;
         this.encryption = encryption;
-        this.encryptionByEntry = new HashMap<>();
+        this.encryptionByEntry = encryptionByEntry;
         this.entries = Lazy.lazy(() -> {
             try {
                 final List<StoreEntry> list = new ArrayList<>(keyStore.size());
-                final Enumeration<String> e = keyStore.aliases();
-                while (e.hasMoreElements()) {
-                    String alias = e.nextElement();
-                    if (keyStore.isCertificateEntry(alias)) {
-                        list.add(certificateEntry(alias, keyStore.getCertificate(alias)));
-                    } else if (keyStore.isKeyEntry(alias)) {
-                        // TODO support a different password for the key
-                        list.add(
-                            keyEntry(alias, keyStore.getKey(alias, encryption.password().chars()), keyStore.getCertificateChain(alias))
-                        );
+                final KeyStoreIterator itr = new KeyStoreIterator(this.keyStore);
+                while (itr.hasNext()) {
+                    final KeyStoreIterator.Entry entry = itr.next();
+                    entry.getCertificate().ifPresent(c -> list.add(certificateEntry(entry.getAlias(), c)));
+
+                    final EncryptionInfo entryEncryption = getKeyEncryption(entry);
+                    final Optional<Tuple<Key, Certificate[]>> keyPair = entry.getKeyPair(entryEncryption.password());
+                    if (keyPair.isPresent()) {
+                        final Tuple<Key, Certificate[]> tup = keyPair.get();
+                        list.add(keyEntry(entry.getAlias(), tup.v1, tup.v2));
                     }
                 }
                 return list;
@@ -84,20 +93,6 @@ public class JavaKeyStore implements CryptoStore {
                 throw new CryptoStoreException("Cannot process " + source.getSourceDescription(), e);
             }
         });
-    }
-
-    private JavaKeyStore(
-        KeyStore keyStore,
-        X5StreamInfo source,
-        EncryptionInfo encryption,
-        Lazy<List<StoreEntry>, X5Exception> entries,
-        Map<String, EncryptionInfo> encryptionByEntry
-    ) {
-        this.keyStore = keyStore;
-        this.source = source;
-        this.encryption = encryption;
-        this.entries = entries;
-        this.encryptionByEntry = encryptionByEntry;
     }
 
     public KeyStore getKeyStore() {
@@ -178,9 +173,34 @@ public class JavaKeyStore implements CryptoStore {
     }
 
     @Override
-    public JavaKeyStore withEncryption(EncryptionInfo withEncryption) throws X5Exception {
-        // TODO: Change key password if it's the same as the store encryption?
-        return new JavaKeyStore(keyStore, source, withEncryption, this.entries, this.encryptionByEntry);
+    public JavaKeyStore withEncryption(EncryptionInfo withEncryption, boolean recurse) throws X5Exception {
+        if (recurse) {
+            try {
+                final KeyStore ks = KeyStore.getInstance(this.keyStore.getType());
+                final Map<String, EncryptionInfo> encryptionByKey = new HashMap<>(this.encryptionByEntry);
+                ks.load(null, withEncryption.password().chars());
+                KeyStoreIterator itr = new KeyStoreIterator(this.keyStore);
+                while (itr.hasNext()) {
+                    final KeyStoreIterator.Entry entry = itr.next();
+                    final EncryptionInfo keyEncryption = getKeyEncryption(entry);
+                    entry.copyTo(ks, keyEncryption.password(), withEncryption.password());
+                    if (entry.isKey()) {
+                        encryptionByKey.put(entry.getAlias(), keyEncryption);
+                    }
+                }
+                return newStore(ks, withEncryption, encryptionByKey);
+            } catch (GeneralSecurityException e) {
+                throw new CryptoStoreException("Failed to duplicate keystore", e);
+            } catch (IOException e) {
+                throw new CryptoStoreException("Failed to duplicate keystore", e);
+            }
+        } else {
+            return newStore(keyStore, withEncryption, new HashMap<>(this.encryptionByEntry));
+        }
+    }
+
+    protected JavaKeyStore newStore(KeyStore ks, EncryptionInfo encryption, Map<String, EncryptionInfo> encryptionByEntry) {
+        return new JavaKeyStore(ks, source, encryption, encryptionByEntry);
     }
 
     private KeyStoreEntry certificateEntry(String name, Certificate certificate) {

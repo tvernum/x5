@@ -57,7 +57,7 @@ public class JavaSecretKey implements JavaKey, X5SecretKey {
     }
 
     @Override
-    public EncryptedObject withEncryption(EncryptionInfo encryption) throws X5Exception {
+    public EncryptedObject withEncryption(EncryptionInfo encryption, boolean recurse) throws X5Exception {
         throw new UnsupportedOperationException("Cannot support encrypting secret keys at this time");
     }
 

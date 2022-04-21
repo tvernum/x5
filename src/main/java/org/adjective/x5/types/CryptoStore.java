@@ -23,6 +23,7 @@ import org.adjective.x5.exception.X5Exception;
 import org.adjective.x5.io.Debug;
 import org.adjective.x5.io.encrypt.EncryptionInfo;
 import org.adjective.x5.types.crypto.EncryptedObject;
+import org.adjective.x5.util.Values;
 
 public interface CryptoStore extends X5Object, EncryptedObject, Sequence {
 
@@ -42,7 +43,7 @@ public interface CryptoStore extends X5Object, EncryptedObject, Sequence {
             return entries().stream().collect(Collectors.toMap(e -> "entry." + e.name(), StoreEntry::value));
         } catch (X5Exception e) {
             Debug.error(e, "Cannot read entries of %s", this.description());
-            return Map.of();
+            return Map.of("error", Values.error(e));
         }
     }
 

@@ -15,10 +15,12 @@
 package org.adjective.x5.types.crypto;
 
 import java.security.KeyStore;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.function.Supplier;
 
+import org.adjective.x5.io.encrypt.EncryptionInfo;
 import org.adjective.x5.io.encrypt.Pkcs12EncryptionInfo;
 import org.adjective.x5.types.X5Object;
 import org.adjective.x5.types.X5StreamInfo;
@@ -31,9 +33,19 @@ public class Pkcs12KeyStore extends JavaKeyStore {
     private final Supplier<Map<String, X5Object>> properties;
 
     public Pkcs12KeyStore(KeyStore keyStore, PKCS12PfxPdu pfx, X5StreamInfo source, Pkcs12EncryptionInfo encryption) {
-        super(keyStore, source, encryption);
+        this(keyStore, pfx, source, encryption, new HashMap<>());
+    }
+
+    private Pkcs12KeyStore(
+        KeyStore keyStore,
+        PKCS12PfxPdu pfx,
+        X5StreamInfo source,
+        Pkcs12EncryptionInfo encryption,
+        Map<String, EncryptionInfo> encryptionByEntry
+    ) {
+        super(keyStore, source, encryption, encryptionByEntry);
         this.pfx = pfx;
-        properties = Lazy.uncheckedLazy(() -> {
+        this.properties = Lazy.uncheckedLazy(() -> {
             Map<String, X5Object> map = new LinkedHashMap<>();
             map.put("encrypted", Values.bool(encryption.isEncrypted(), source));
             if (encryption.isEncrypted()) {
@@ -42,6 +54,21 @@ public class Pkcs12KeyStore extends JavaKeyStore {
             map.putAll(super.properties());
             return map;
         }).unchecked();
+    }
+
+    @Override
+    protected Pkcs12KeyStore newStore(KeyStore ks, EncryptionInfo encryption, Map<String, EncryptionInfo> encryptionByEntry) {
+        if (encryption instanceof Pkcs12EncryptionInfo) {
+            return new Pkcs12KeyStore(ks, pfx, this.getSource(), (Pkcs12EncryptionInfo) encryption, encryptionByEntry);
+        } else {
+            throw new IllegalArgumentException(
+                "Encryption for PKCS#12 Keystore must be "
+                    + Pkcs12EncryptionInfo.class.getSimpleName()
+                    + " (not "
+                    + encryption.getClass().getSimpleName()
+                    + ")"
+            );
+        }
     }
 
     @Override

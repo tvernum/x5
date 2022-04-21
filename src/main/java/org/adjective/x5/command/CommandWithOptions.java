@@ -49,11 +49,24 @@ public abstract class CommandWithOptions extends AbstractSimpleCommand {
             .withValuesConvertedBy(new SimpleConverter<>(PasswordSpec.class, PasswordSpec::parse));
     }
 
+    protected OptionSpec<Void> declareValuelessOption(String name, String... altNames) {
+        OptionSpecBuilder builder;
+        if (altNames.length == 0) {
+            builder = parser.accepts(name);
+        } else {
+            List<String> names = new ArrayList<>(altNames.length + 1);
+            names.add(name);
+            names.addAll(Arrays.asList(altNames));
+            builder = parser.acceptsAll(names);
+        }
+        return builder;
+    }
+
     @Override
     public void execute(Context context, ValueSet values, List<String> args) throws X5Exception, IOException {
         final OptionSet options = parser.parse(args.toArray(new String[0]));
         this.execute(context, values, options, arguments.values(options));
     }
 
-    protected abstract void execute(Context context, ValueSet values, OptionSet options, List<String> args) throws X5Exception;
+    protected abstract void execute(Context context, ValueSet values, OptionSet options, List<String> args) throws X5Exception, IOException;
 }

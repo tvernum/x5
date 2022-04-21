@@ -21,6 +21,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.adjective.x5.command.ToCommand;
 import org.adjective.x5.exception.DuplicateEntryException;
@@ -96,8 +97,20 @@ public class SimpleKeyStore implements CryptoStore {
     }
 
     @Override
-    public EncryptedObject withEncryption(EncryptionInfo encryption) throws X5Exception {
-        return new SimpleKeyStore(source, encryption, new ArrayList<>(entries), new HashMap<>(entryEncryption));
+    public EncryptedObject withEncryption(EncryptionInfo encryption, boolean recurse) {
+        final Map<StoreEntry, EncryptionInfo> entryEncryption;
+        if (recurse) {
+            entryEncryption = this.entryEncryption.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, kv -> {
+                if (this.storeEncryption.equals(kv.getValue())) {
+                    return encryption;
+                } else {
+                    return kv.getValue();
+                }
+            }));
+        } else {
+            entryEncryption = new HashMap<>(this.entryEncryption);
+        }
+        return new SimpleKeyStore(source, encryption, new ArrayList<>(entries), entryEncryption);
     }
 
 }

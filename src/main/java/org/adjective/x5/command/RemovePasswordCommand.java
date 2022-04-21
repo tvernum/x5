@@ -37,7 +37,7 @@ public class RemovePasswordCommand extends AbstractSimpleCommand {
             EncryptedObject oldEncrypted = (EncryptedObject) oldObject;
             EncryptedObject newObject;
             if (oldEncrypted.encryption().isEncrypted()) {
-                newObject = oldEncrypted.withEncryption(Unencrypted.INSTANCE);
+                newObject = oldEncrypted.withEncryption(Unencrypted.INSTANCE, false);
             } else {
                 newObject = oldEncrypted;
             }

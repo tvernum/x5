@@ -85,7 +85,7 @@ public class JavaPrivateKey implements X5PrivateKey, JavaKey {
     }
 
     @Override
-    public JavaPrivateKey withEncryption(EncryptionInfo withEncryption) {
+    public JavaPrivateKey withEncryption(EncryptionInfo withEncryption, boolean recurse) {
         return new JavaPrivateKey(this.key, this.source, withEncryption);
     }
 

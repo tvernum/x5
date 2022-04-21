@@ -75,7 +75,7 @@ public class GenericPrivateCredential implements PrivateCredential, CryptoElemen
     }
 
     @Override
-    public EncryptedObject withEncryption(EncryptionInfo encryption) throws X5Exception {
+    public EncryptedObject withEncryption(EncryptionInfo encryption, boolean recurse) throws X5Exception {
         return null;
     }
 }

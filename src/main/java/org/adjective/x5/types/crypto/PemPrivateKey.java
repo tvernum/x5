@@ -82,7 +82,7 @@ public class PemPrivateKey implements X5PrivateKey {
     }
 
     @Override
-    public PemPrivateKey withEncryption(EncryptionInfo newEncryption) {
+    public PemPrivateKey withEncryption(EncryptionInfo newEncryption, boolean recurse) {
         return new PemPrivateKey(this.key, this.source, newEncryption);
     }
 

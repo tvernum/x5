@@ -11,16 +11,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package org.adjective.x5.util;
 
-package org.adjective.x5.types.crypto;
+public class Tuple<S, T> {
 
-import org.adjective.x5.exception.X5Exception;
-import org.adjective.x5.io.encrypt.EncryptionInfo;
-import org.adjective.x5.types.X5Object;
+    public final S v1;
+    public final T v2;
 
-public interface EncryptedObject extends X5Object {
-    EncryptionInfo encryption();
-
-    EncryptedObject withEncryption(EncryptionInfo encryption, boolean recurse) throws X5Exception;
-
+    public Tuple(S v1, T v2) {
+        this.v1 = v1;
+        this.v2 = v2;
+    }
 }

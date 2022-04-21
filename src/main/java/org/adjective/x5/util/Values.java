@@ -21,6 +21,7 @@ import java.security.Principal;
 import java.util.Date;
 import java.util.Optional;
 
+import org.adjective.x5.exception.X5Exception;
 import org.adjective.x5.types.EncodingSyntax;
 import org.adjective.x5.types.FileType;
 import org.adjective.x5.types.X5Object;
@@ -142,4 +143,15 @@ public class Values {
         return new X5Null(source);
     }
 
+    public static X5String error(X5Exception exception) {
+        final StringBuilder str = new StringBuilder();
+
+        for (Throwable th = exception; th != null; th = th.getCause()) {
+            if (str.length() != 0) {
+                str.append(" ⤆ ");
+            }
+            str.append(th.getClass().getSimpleName()).append(": ").append(th.getMessage());
+        }
+        return string(str.toString());
+    }
 }

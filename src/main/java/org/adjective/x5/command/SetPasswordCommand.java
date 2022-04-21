@@ -26,7 +26,16 @@ import org.adjective.x5.types.X5Object;
 import org.adjective.x5.types.crypto.EncryptedObject;
 import org.adjective.x5.types.value.Password;
 
-public class SetPasswordCommand extends AbstractSimpleCommand {
+import joptsimple.OptionSet;
+import joptsimple.OptionSpec;
+
+public class SetPasswordCommand extends CommandWithOptions {
+
+    private final OptionSpec<Void> recurseOption;
+
+    public SetPasswordCommand() {
+        recurseOption = declareValuelessOption("recurse", "r");
+    }
 
     @Override
     public String name() {
@@ -34,21 +43,21 @@ public class SetPasswordCommand extends AbstractSimpleCommand {
     }
 
     @Override
-    public void execute(Context context, ValueSet values, List<String> args) throws X5Exception, IOException {
+    protected void execute(Context context, ValueSet values, OptionSet options, List<String> args) throws X5Exception, IOException {
         requireArgumentCount(1, args);
-        String passwordSpec = args.get(0);
-        Password password = context.passwords().forSpec(PasswordSpec.parse(passwordSpec));
-        X5Object oldObject = values.pop();
+        final String passwordSpec = args.get(0);
+        final Password password = context.passwords().forSpec(PasswordSpec.parse(passwordSpec));
+        final X5Object oldObject = values.pop();
         if (oldObject instanceof EncryptedObject) {
-            EncryptedObject oldEncrypted = (EncryptedObject) oldObject;
-            EncryptionInfo oldEncryption = oldEncrypted.encryption();
+            final EncryptedObject oldEncrypted = (EncryptedObject) oldObject;
+            final EncryptionInfo oldEncryption = oldEncrypted.encryption();
             final EncryptionInfo newEncryption;
             if (oldEncryption.isEncrypted()) {
                 newEncryption = oldEncryption.withPassword(password);
             } else {
                 newEncryption = EncryptionProvider.getDefaultEncryption(oldObject, password);
             }
-            EncryptedObject newObject = oldEncrypted.withEncryption(newEncryption);
+            EncryptedObject newObject = oldEncrypted.withEncryption(newEncryption, options.has(recurseOption));
             values.push(newObject);
         } else {
             throw new InvalidTargetException(oldObject, "Cannot apply a password");
