@@ -1,0 +1,31 @@
+name: Java CI Build
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        java-version: ['11', '17']
+        java-vendor: ['temurin', 'zulu', 'corretto']
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up JDK${{ matrix.java-vendor }-${{ matrix.java-version }}} 
+        uses: actions/setup-java@v3
+        with:
+          java-version: ${{ matrix.java-version }}
+          distribution: ${{ matrix.java-vendor }}
+          cache: 'gradle'
+      - name: Validate Gradle wrapper
+        uses: gradle/wrapper-validation-action@e6e38bacfdf1a337459f332974bb2327a31aaf4b
+      - name: Build with Gradle
+        uses: gradle/gradle-build-action@0d13054264b0bb894ded474f08ebb30921341cee
+        with:
+          arguments: build
+
