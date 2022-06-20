@@ -22,8 +22,13 @@ import java.io.Reader;
 import java.nio.charset.StandardCharsets;
 import java.security.GeneralSecurityException;
 import java.security.KeyStore;
+import java.security.cert.Certificate;
+import java.security.cert.CertificateException;
+import java.security.cert.CertificateFactory;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Base64;
+import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -47,6 +52,7 @@ import org.adjective.x5.types.X5Object;
 import org.adjective.x5.types.X5StreamInfo;
 import org.adjective.x5.types.X5Type;
 import org.adjective.x5.types.crypto.JavaKeyStore;
+import org.adjective.x5.types.crypto.JavaX509Certificate;
 import org.adjective.x5.types.crypto.Pkcs12KeyStore;
 import org.adjective.x5.types.crypto.X5CertificateChain;
 import org.adjective.x5.types.value.DN;
@@ -93,17 +99,22 @@ public class FileParser {
         X5Exception {
         byte byte0 = headerBytes[0];
         byte byte1 = headerBytes[1];
+        byte byte2 = headerBytes[2];
+        byte byte3 = headerBytes[3];
         if (byte0 == 0x30 && (byte1 == (byte) 0x82 || byte1 == 0x56)) {
             return readPkcs12(in, file, passwordSupplier);
         }
-        if (byte0 == (byte)0xFE && byte1 == (byte)0xED) {
+        if (byte0 == (byte) 0xFE && byte1 == (byte) 0xED) {
             return readJks(in, file, passwordSupplier);
         }
         if (containsBytes(headerBytes, PEM_MARKER1) || containsBytes(headerBytes, PEM_MARKER2)) {
             return readPem(in, file, passwordSupplier);
         }
+        if (byte0 == 'M' && byte1 == 'I' && byte2 == 'I') {
+            return readBase64Certificate(in, file);
+        }
         Debug.printf("Cannot parse header bytes: [%s] (%x,%x)", Hex.toHexString(headerBytes), byte0, byte1);
-        // TODO DER/BER/raw-Base64
+        // TODO DER/BER/
         throw new UnsupportedFileTypeException(file.path());
     }
 
@@ -138,6 +149,35 @@ public class FileParser {
         }
     }
 
+    private X5Object readBase64Certificate(BufferedInputStream in, X5File file) throws X5Exception {
+        final Collection<? extends Certificate> certificates = readBase64Certificates(in, file);
+        final List<JavaX509Certificate> x5 = new ArrayList<>(certificates.size());
+        int index = 1;
+        for (Certificate c : certificates) {
+            final PathInfo source = new PathInfo(file.path(), index, FileType.TEXT);
+            x5.add(new JavaX509Certificate((java.security.cert.X509Certificate) c, source));
+        }
+        switch (x5.size()) {
+            case 0:
+                throw new BadFileContentException("Certificate file " + file + " does not contain any objects", file.path());
+            case 1:
+                return x5.get(0);
+            default:
+                return handleObjectSequence(file, x5);
+        }
+    }
+
+    private Collection<? extends Certificate> readBase64Certificates(BufferedInputStream in, X5File file) throws FileReadException {
+        try {
+            final CertificateFactory factory = CertificateFactory.getInstance("X509");
+            try (var b64 = Base64.getMimeDecoder().wrap(in)) {
+                return factory.generateCertificates(b64);
+            }
+        } catch (CertificateException | IOException e) {
+            throw new FileReadException(file.path(), e);
+        }
+    }
+
     private X5Object readPem(InputStream in, X5File file, PasswordSupplier passwordSupplier) throws IOException, X5Exception {
         try (Reader reader = new InputStreamReader(in)) {
             final PEMParser parser = new PEMParser(reader);
@@ -164,7 +204,7 @@ public class FileParser {
         }
     }
 
-    private X5Object handleObjectSequence(X5File file, List<X5Object> objects) throws X5Exception {
+    private X5Object handleObjectSequence(X5File file, List<? extends X5Object> objects) throws X5Exception {
         final Set<Optional<EncodingSyntax>> encodings = objects.stream()
             .map(X5Object::getSource)
             .map(X5StreamInfo::getSyntax)
