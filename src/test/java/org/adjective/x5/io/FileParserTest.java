@@ -55,7 +55,7 @@ class FileParserTest {
         try (var in = new ByteArrayInputStream(str.getBytes(StandardCharsets.UTF_8))) {
             final X5Object object = FileParser.getInstance().read(in, file, password);
             assertThat(object).isInstanceOf(X509Certificate.class);
-            assertThat(((X509Certificate) object).subject().toString()).isEqualTo("CN=server, DC=example, DC=net");
+            assertThat(((X509Certificate) object).subject().toString()).isEqualTo("cn=server,dc=example,dc=net");
         }
     }
 }

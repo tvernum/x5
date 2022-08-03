@@ -2,5 +2,5 @@
                      Object Type : KeyPair
 
                          private : PrivateKey : Object #1 from pem/ca1.key
-                          public : Certificate : Object #1 from pem/ca1.crt (DC=net,DC=example,OU=security,CN=Root CA)
+                          public : Certificate : Object #1 from pem/ca1.crt (cn=Root CA,ou=security,dc=example,dc=net)
 --------------------------------   --------------------------------

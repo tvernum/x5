@@ -4,5 +4,5 @@
                      Object Type : StoreEntry
 
                             name : server
-                           value : Certificate : Object #1 from pem/server2.crt (DC=net,DC=example,CN=server)
+                           value : Certificate : Object #1 from pem/server2.crt (cn=server,dc=example,dc=net)
 --------------------------------   --------------------------------

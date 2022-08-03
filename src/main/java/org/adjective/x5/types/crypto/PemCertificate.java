@@ -17,6 +17,7 @@ package org.adjective.x5.types.crypto;
 import java.io.IOException;
 import java.io.OutputStream;
 
+import org.adjective.x5.exception.DnParseException;
 import org.adjective.x5.exception.UnencodableObjectException;
 import org.adjective.x5.exception.X5Exception;
 import org.adjective.x5.io.PemOutput;
@@ -41,12 +42,12 @@ public class PemCertificate extends AbstractX509Certificate {
     }
 
     @Override
-    public DN subject() {
+    public DN subject() throws DnParseException {
         return Values.dn(certificate.getSubject(), source);
     }
 
     @Override
-    public DN issuer() {
+    public DN issuer() throws DnParseException {
         return Values.dn(certificate.getIssuer(), source);
     }
 

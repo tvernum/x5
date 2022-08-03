@@ -11,28 +11,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package org.adjective.x5.exception;
 
-package org.adjective.x5.types;
-
-import org.adjective.x5.exception.DnParseException;
-import org.adjective.x5.types.value.Algorithm;
-import org.adjective.x5.types.value.DN;
-import org.adjective.x5.types.value.X5Date;
-import org.adjective.x5.types.value.X5Number;
-
-public interface X509Certificate extends Certificate {
-
-    DN subject() throws DnParseException;
-
-    DN issuer() throws DnParseException;
-
-    X5Date notBefore();
-
-    X5Date notAfter();
-
-    X5Number<?> serialNumber();
-
-    Algorithm signatureAlgorithm();
-
-    X5Record basicConstraints();
+public class DnParseException extends X5Exception {
+    public DnParseException(String message) {
+        super(message);
+    }
 }

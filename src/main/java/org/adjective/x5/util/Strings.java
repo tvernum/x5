@@ -11,28 +11,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package org.adjective.x5.util;
 
-package org.adjective.x5.types;
+public final class Strings {
 
-import org.adjective.x5.exception.DnParseException;
-import org.adjective.x5.types.value.Algorithm;
-import org.adjective.x5.types.value.DN;
-import org.adjective.x5.types.value.X5Date;
-import org.adjective.x5.types.value.X5Number;
-
-public interface X509Certificate extends Certificate {
-
-    DN subject() throws DnParseException;
-
-    DN issuer() throws DnParseException;
-
-    X5Date notBefore();
-
-    X5Date notAfter();
-
-    X5Number<?> serialNumber();
-
-    Algorithm signatureAlgorithm();
-
-    X5Record basicConstraints();
+    public static int count(char c, String s) {
+        int count = 0;
+        for (int i = 0; i < s.length(); i++) {
+            if (s.charAt(i) == c) {
+                count++;
+            }
+        }
+        return count;
+    }
 }

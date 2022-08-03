@@ -1,0 +1,1 @@
+read pem/ca1.crt | .subject | as sequence | seq ( first , last ) | print

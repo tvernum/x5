@@ -20,6 +20,7 @@ import java.math.BigInteger;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.X509Certificate;
 
+import org.adjective.x5.exception.DnParseException;
 import org.adjective.x5.exception.UnencodableObjectException;
 import org.adjective.x5.exception.X5Exception;
 import org.adjective.x5.io.PemOutput;
@@ -47,13 +48,13 @@ public class JavaX509Certificate extends AbstractX509Certificate implements Java
     }
 
     @Override
-    public DN subject() {
-        return Values.dn(certificate.getSubjectDN(), getSource());
+    public DN subject() throws DnParseException {
+        return Values.dn(certificate.getSubjectX500Principal(), getSource());
     }
 
     @Override
-    public DN issuer() {
-        return Values.dn(certificate.getIssuerDN(), getSource());
+    public DN issuer() throws DnParseException {
+        return Values.dn(certificate.getIssuerX500Principal(), getSource());
     }
 
     @Override

@@ -17,10 +17,12 @@ package org.adjective.x5.util;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.nio.file.Path;
-import java.security.Principal;
 import java.util.Date;
 import java.util.Optional;
 
+import javax.security.auth.x500.X500Principal;
+
+import org.adjective.x5.exception.DnParseException;
 import org.adjective.x5.exception.X5Exception;
 import org.adjective.x5.types.EncodingSyntax;
 import org.adjective.x5.types.FileType;
@@ -41,6 +43,7 @@ import org.bouncycastle.asn1.ASN1Encodable;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.ASN1Primitive;
 import org.bouncycastle.asn1.x500.X500Name;
+import org.bouncycastle.asn1.x500.style.RFC4519Style;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 
 public class Values {
@@ -111,12 +114,12 @@ public class Values {
         return new X5Boolean(value, source);
     }
 
-    public static DN dn(Principal principal, X5StreamInfo source) {
-        return new DN(principal.getName(), source);
+    public static DN dn(X500Principal principal, X5StreamInfo source) throws DnParseException {
+        return dn(X500Name.getInstance(principal.getEncoded()), source);
     }
 
-    public static DN dn(X500Name principal, X5StreamInfo source) {
-        return new DN(principal.toString(), source);
+    public static DN dn(X500Name principal, X5StreamInfo source) throws DnParseException {
+        return DN.parse(RFC4519Style.INSTANCE.toString(principal), source);
     }
 
     public static X5Date date(Date date, X5StreamInfo source) {

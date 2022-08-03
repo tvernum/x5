@@ -19,11 +19,13 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.function.Supplier;
 
+import org.adjective.x5.exception.DnParseException;
 import org.adjective.x5.types.FixedRecord;
 import org.adjective.x5.types.X509Certificate;
 import org.adjective.x5.types.X5Object;
 import org.adjective.x5.types.X5Record;
 import org.adjective.x5.types.X5StreamInfo;
+import org.adjective.x5.types.value.DN;
 import org.adjective.x5.util.Lazy;
 import org.adjective.x5.util.Values;
 
@@ -48,7 +50,12 @@ public abstract class AbstractX509Certificate extends AbstractCertificate implem
 
     @Override
     public String description() {
-        return super.description() + " (" + subject() + ")";
+        try {
+            final DN sub = subject();
+            return super.description() + " (" + sub + ")";
+        } catch (DnParseException e) {
+           return super.description();
+        }
     }
 
     @Override

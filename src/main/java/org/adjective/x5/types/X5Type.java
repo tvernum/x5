@@ -27,6 +27,7 @@ import java.util.function.Predicate;
 import org.adjective.x5.io.encrypt.EncryptionInfo;
 import org.adjective.x5.types.crypto.X5SecretKey;
 import org.adjective.x5.types.value.ASN1Value;
+import org.adjective.x5.types.value.AVA;
 import org.adjective.x5.types.value.Algorithm;
 import org.adjective.x5.types.value.DN;
 import org.adjective.x5.types.value.Password;
@@ -74,7 +75,8 @@ public class X5Type<X extends X5Object> {
     );
     public static final X5Type<ASN1Value> ASN1 = new X5Type<>("ASN.1", ASN1Value.class, "asn1");
     public static final X5Type<DN> DISTINGUISHED_NAME = new X5Type<>("Distinguished Name", DN.class, "dn");
-    public static final X5Type RELATIVE_DISTINGUISHED_NAME = new X5Type("Relative Distinguished Name", RDN.class, "rdn");
+    public static final X5Type<RDN> RELATIVE_DISTINGUISHED_NAME = new X5Type("Relative Distinguished Name", RDN.class, "rdn");
+    public static final X5Type<AVA> ATTRIBUTE_VALUE_ASSERTION = new X5Type("Attribute Value Assertion", AVA.class, "rdn");
 
     private final String name;
     private final Class<X> objectClass;

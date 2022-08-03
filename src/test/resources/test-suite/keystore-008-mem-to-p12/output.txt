@@ -1,1 +1,1 @@
-((ca,CN=Root CA, OU=security, DC=example, DC=net,null),(server,null,CN=server, DC=example, DC=net))
+((ca,cn=Root CA,ou=security,dc=example,dc=net,null),(server,null,cn=server,dc=example,dc=net))
