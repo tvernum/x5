@@ -71,7 +71,7 @@ public final class JCAConversion {
                 return chain0(opt.get());
             }
         }
-        throw new InvalidTargetException(x5, "Cannot convert " + x5 + " to JCA certificate chain");
+        throw new InvalidTargetException(x5, "Cannot convert " + x5.description() + " to JCA certificate chain");
     }
 
     private static java.security.cert.Certificate[] chain0(Certificate x5) throws X5Exception {

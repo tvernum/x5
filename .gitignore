@@ -11,4 +11,4 @@ buildSrc
 /*.pem
 /*.p12
 sample.*
-password.txt
+/password.txt

@@ -28,6 +28,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 
 import javax.crypto.SecretKey;
@@ -68,7 +69,12 @@ public class JavaKeyStore implements CryptoStore {
         return encryptionByEntry.getOrDefault(entry.getAlias(), encryption);
     }
 
-    protected JavaKeyStore(KeyStore keyStore, X5StreamInfo source, EncryptionInfo encryption, Map<String, EncryptionInfo> encryptionByEntry) {
+    protected JavaKeyStore(
+        KeyStore keyStore,
+        X5StreamInfo source,
+        EncryptionInfo encryption,
+        Map<String, EncryptionInfo> encryptionByEntry
+    ) {
         this.keyStore = keyStore;
         this.source = source;
         this.encryption = encryption;
@@ -141,11 +147,11 @@ public class JavaKeyStore implements CryptoStore {
 
     private void addKeyPair(String name, KeyPair pair, Optional<EncryptionInfo> encryption) throws X5Exception {
         try {
-            final EncryptionInfo entryEncryption = encryption.orElse(this.encryption);
+            final EncryptionInfo entryEncryption = encryption.filter(EncryptionInfo::isEncrypted).orElse(this.encryption);
             this.keyStore.setKeyEntry(
                 name,
                 JCAConversion.key(pair.privateCredential()),
-                entryEncryption.password().chars(),
+                Objects.requireNonNull(entryEncryption.password(), "Encryption <" + entryEncryption + "> has no password").chars(),
                 JCAConversion.chain(pair.publicCredential())
             );
             this.encryptionByEntry.put(name, entryEncryption);

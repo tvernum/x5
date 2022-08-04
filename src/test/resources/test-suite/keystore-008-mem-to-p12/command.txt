@@ -1,0 +1,6 @@
+keystore(
+    pair( read pem/server2.key , read pem/server2.chain ),
+    entry("ca", read pem/ca1.crt)
+ ) | to p12 | write tmp/from-mem.p12
+ ;
+read -p "=keystore-password" tmp/from-mem.p12 | each ( seq( .name, property value subject? , property value public? #0 subject? ) ) | sort | print

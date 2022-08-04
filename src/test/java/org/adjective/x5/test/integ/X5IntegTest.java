@@ -28,6 +28,7 @@ import java.nio.file.Paths;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.adjective.x5.TestRunner;
 import org.adjective.x5.command.Environment;
@@ -120,11 +121,12 @@ class X5IntegTest {
         var output = dir.resolve("output.txt");
         assertThat(output).isRegularFile();
 
+        var suitePasswords = dir.resolve("password.txt");
+        var sharedPasswords = samplesDirectory.resolve("passwords.txt");
+        final List<Path> passwordFiles = Stream.of(suitePasswords, sharedPasswords).filter(Files::exists).collect(Collectors.toList());
+
         final Environment environment = new Environment();
-        final FilePasswordSupplier passwordSupplier = new FilePasswordSupplier(
-            environment,
-            Set.of(samplesDirectory.resolve("passwords.txt"))
-        );
+        final FilePasswordSupplier passwordSupplier = new FilePasswordSupplier(environment, passwordFiles);
         final TestFileSystem fileSystem = new TestFileSystem(passwordSupplier);
 
         var commandText = Files.readAllLines(command);

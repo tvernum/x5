@@ -39,7 +39,7 @@ public class Pkcs12EncryptionInfo extends AbstractEncryptionInfo implements Encr
     public Pkcs12EncryptionInfo(X5StreamInfo source, ASN1ObjectIdentifier digest, Password password) {
         super(source);
         this.digestId = digest;
-        this.password = password;
+        this.password = Objects.requireNonNull(password, "PKCS#12 password may not be null");
     }
 
     @Override
