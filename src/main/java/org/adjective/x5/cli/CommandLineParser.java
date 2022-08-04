@@ -23,6 +23,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.adjective.x5.cli.parser.X5BaseVisitor;
+import org.adjective.x5.cli.parser.X5Lexer;
+import org.adjective.x5.cli.parser.X5Parser;
 import org.adjective.x5.command.CommandLineFunction;
 import org.adjective.x5.command.Commands;
 import org.adjective.x5.types.X5StreamInfo;
@@ -33,10 +36,6 @@ import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.Token;
 import org.antlr.v4.runtime.tree.RuleNode;
 import org.antlr.v4.runtime.tree.TerminalNode;
-
-import org.adjective.x5.cli.parser.X5BaseVisitor;
-import org.adjective.x5.cli.parser.X5Lexer;
-import org.adjective.x5.cli.parser.X5Parser;
 
 public class CommandLineParser {
 
@@ -119,14 +118,19 @@ public class CommandLineParser {
             final String name = ctx.Word().getText();
             final CommandLineFunction function = commands.getFunction(name)
                 .orElseThrow(() -> new IllegalArgumentException("No such function '" + name + "'"));
-            final List<CommandLine> args = new ArrayList<>(ctx.functionArgs().getChildCount());
-            ctx.functionArgs().expr().stream().forEachOrdered(e -> {
-                final CommandLine expr = e.accept(this);
-                if (expr == null) {
-                    throw new IllegalStateException("Failed to parse expression " + describe(e));
-                }
-                args.add(expr);
-            });
+            final List<CommandLine> args ;
+            if (ctx.functionArgs() == null) {
+                args = List.of();
+            } else {
+                args = new ArrayList<>(ctx.functionArgs().getChildCount());
+                ctx.functionArgs().expr().stream().forEachOrdered(e -> {
+                    final CommandLine expr = e.accept(this);
+                    if (expr == null) {
+                        throw new IllegalStateException("Failed to parse expression " + describe(e));
+                    }
+                    args.add(expr);
+                });
+            }
             return new FunctionExecution(function, args);
         }
 
