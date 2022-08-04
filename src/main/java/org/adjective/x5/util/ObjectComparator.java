@@ -18,6 +18,9 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 
+import org.adjective.x5.exception.X5Exception;
+import org.adjective.x5.io.Debug;
+import org.adjective.x5.types.Sequence;
 import org.adjective.x5.types.X5Object;
 import org.adjective.x5.types.X5Type;
 import org.adjective.x5.types.X5Value;
@@ -63,6 +66,9 @@ public class ObjectComparator implements Comparator<X5Object> {
         if (o1 instanceof X5Value && o2 instanceof X5Value) {
             return compareValues((X5Value) o1, (X5Value) o2);
         }
+        if (o1 instanceof Sequence && o2 instanceof Sequence) {
+            return compareSequences((Sequence) o1, (Sequence) o2);
+        }
         return compareObjects(o1, o2);
     }
 
@@ -82,7 +88,6 @@ public class ObjectComparator implements Comparator<X5Object> {
     }
 
     private int compareValues(X5Value o1, X5Value o2) {
-
         final Object c1 = o1.value();
         final Object c2 = o2.value();
 
@@ -94,6 +99,35 @@ public class ObjectComparator implements Comparator<X5Object> {
         }
 
         return compareObjects(o1, o2);
+    }
+
+    private int compareSequences(Sequence seq1, Sequence seq2) {
+        try {
+            var items1 = seq1.items();
+            var items2 = seq2.items();
+            var size1 = Iterables.size(items1);
+            var size2 = Iterables.size(items2);
+            if (size1 != size2) {
+                return Integer.compare(size1, size2);
+            }
+            if (size1 == 0) {
+                return 0;
+            }
+            var itr1 = items1.iterator();
+            var itr2 = items2.iterator();
+            while (itr1.hasNext()) {
+                var o1 = itr1.next();
+                var o2 = itr2.next();
+                int cmp = compare(o1, o2);
+                if (cmp != 0) {
+                    return cmp;
+                }
+            }
+            return 0;
+        } catch (X5Exception e) {
+            Debug.error(e, "Cannot get items of sequence");
+            return 0;
+        }
     }
 
     private int compareObjects(X5Object o1, X5Object o2) {

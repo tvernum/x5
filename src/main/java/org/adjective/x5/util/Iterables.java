@@ -14,6 +14,7 @@
 
 package org.adjective.x5.util;
 
+import java.util.Collection;
 import java.util.List;
 
 public class Iterables {
@@ -22,5 +23,16 @@ public class Iterables {
             return ((List<T>) itr).get(0);
         }
         return itr.iterator().next();
+    }
+
+    public static int size(Iterable<?> itr) {
+        if (itr instanceof Collection) {
+            return ((Collection<?>) itr).size();
+        }
+        int i = 0;
+        for (var ignore : itr) {
+            i++;
+        }
+        return i;
     }
 }

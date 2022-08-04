@@ -1,0 +1,12 @@
+seq(
+    seq( 2 ),
+    seq( 5, 0 ),
+    seq( 0, 0, 0 ),
+    seq( 0, 5 ),
+    seq( 5, 5, 5 ),
+    seq( ),
+    seq( 2, 1 ),
+    seq( 0 ),
+    seq( 1 ),
+    seq( 1, 2 )
+) | sort | print
