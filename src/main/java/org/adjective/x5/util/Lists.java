@@ -16,6 +16,7 @@ package org.adjective.x5.util;
 
 import java.util.AbstractList;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 public class Lists {
 
@@ -42,5 +43,13 @@ public class Lists {
                 return first.size() + second.size();
             }
         };
+    }
+
+    public static <T> T last(List<T> list) {
+        if (list.isEmpty()) {
+            throw new NoSuchElementException("Cannot get last element of empty list");
+        } else {
+            return list.get(list.size() - 1);
+        }
     }
 }

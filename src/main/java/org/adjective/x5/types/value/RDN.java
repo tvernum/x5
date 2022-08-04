@@ -34,8 +34,12 @@ public class RDN extends AbstractValueType<String> {
     public RDN(String value, X5StreamInfo source) {
         super(value, source);
         final Matcher matcher = PATTERN.matcher(value);
-        this.attributeNames = List.of(matcher.group(1).split("\\+"));
-        this.attributeValue = matcher.group(2);
+        if(matcher.matches()) {
+            this.attributeNames = List.of(matcher.group(1).split("\\+"));
+            this.attributeValue = matcher.group(2);
+        } else {
+            throw new IllegalArgumentException("Invalid RDN: " + value);
+        }
     }
 
     @Override

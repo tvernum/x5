@@ -36,6 +36,7 @@ import org.adjective.x5.types.X5Object;
 import org.adjective.x5.types.X5Type;
 import org.adjective.x5.types.crypto.BasicStoreEntry;
 import org.adjective.x5.types.crypto.SimpleKeyStore;
+import org.adjective.x5.util.Lists;
 
 public class KeystoreFunction extends AbstractFunction implements CommandLineFunction {
 
@@ -77,7 +78,7 @@ public class KeystoreFunction extends AbstractFunction implements CommandLineFun
     private String guessName(CryptoStore store, CryptoValue obj) throws X5Exception {
         if (obj instanceof X509Certificate) {
             var cert = (X509Certificate) obj;
-            return unique(cert.subject().rdnList().get(0).getAttributeValue().toLowerCase(Locale.ROOT), store);
+            return unique(Lists.last(cert.subject().rdnList()).getAttributeValue().toLowerCase(Locale.ROOT), store);
         }
         if (obj instanceof CertificateChain) {
             var chain = (CertificateChain) obj;
