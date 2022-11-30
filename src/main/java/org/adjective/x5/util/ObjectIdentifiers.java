@@ -22,7 +22,9 @@ import org.adjective.x5.types.value.OID;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.oiw.OIWObjectIdentifiers;
 import org.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers;
+import org.bouncycastle.asn1.x500.style.BCStyle;
 import org.bouncycastle.asn1.x509.Extension;
+import org.bouncycastle.asn1.x509.X509ObjectIdentifiers;
 import org.bouncycastle.asn1.x9.X9ObjectIdentifiers;
 
 public class ObjectIdentifiers {
@@ -58,6 +60,17 @@ public class ObjectIdentifiers {
         define("Any Key Usage (X.509)", Extension.extendedKeyUsage.branch("0"));
 
         defineStr("TrustStore Tag (Oracle Ext)", "TrustStore", "2.16.840.1.113894.746875.1.1");
+
+        define("emailAddress", PKCSObjectIdentifiers.pkcs_9_at_emailAddress, "email");
+
+        define("businessCategory", BCStyle.BUSINESS_CATEGORY);
+        define("commonName", BCStyle.CN, "cn");
+        define("countryName", BCStyle.C, "c");
+        define("domainComponent", BCStyle.DC, "dc");
+        define("organizationName", BCStyle.O, "o");
+        define("organizationalUnitName", BCStyle.OU, "ou");
+        define("surname", BCStyle.SURNAME, "sn");
+        define("uid", BCStyle.UID);
     }
 
     private static void define(String name, ASN1ObjectIdentifier oid) {

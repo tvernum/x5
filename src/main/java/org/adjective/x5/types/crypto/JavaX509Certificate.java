@@ -32,6 +32,11 @@ import org.adjective.x5.types.value.OID;
 import org.adjective.x5.types.value.X5Date;
 import org.adjective.x5.types.value.X5Number;
 import org.adjective.x5.util.Values;
+import org.bouncycastle.asn1.*;
+import org.bouncycastle.asn1.x500.X500Name;
+import org.bouncycastle.asn1.x509.Extension;
+import org.bouncycastle.asn1.x509.GeneralName;
+import org.bouncycastle.asn1.x509.GeneralNames;
 import org.bouncycastle.cert.X509CertificateHolder;
 
 public class JavaX509Certificate extends AbstractX509Certificate implements JavaCertificate<X509Certificate> {
@@ -83,6 +88,13 @@ public class JavaX509Certificate extends AbstractX509Certificate implements Java
             pathLenConstraint >= 0,
             pathLenConstraint < 0 || pathLenConstraint == Integer.MAX_VALUE ? null : BigInteger.valueOf(pathLenConstraint)
         );
+    }
+
+    @Override
+    public X5Record subjectAlternativeName() {
+        var extensionValue = certificate.getExtensionValue(Extension.subjectAlternativeName.getId());
+        var generalNames = GeneralNames.getInstance(extensionValue);
+        return new GeneralNamesRecord(generalNames, source.withDescriptionPrefix("subject-alternative-name of"));
     }
 
     @Override

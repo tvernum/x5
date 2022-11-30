@@ -35,4 +35,5 @@ public interface X509Certificate extends Certificate {
     Algorithm signatureAlgorithm();
 
     X5Record basicConstraints();
+    X5Record subjectAlternativeName();
 }
