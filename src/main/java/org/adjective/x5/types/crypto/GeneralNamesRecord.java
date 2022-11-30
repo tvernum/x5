@@ -64,28 +64,29 @@ public class GeneralNamesRecord implements X5Record {
                 final String key = "other:" + ObjectIdentifiers.friendlyName(oid).orElse(oid.toString());
                 populate(names, key, Values.asn1(seq.getObjectAt(1), source));
             } else {
-                X5Value<?> value = switch (name.getTagNo()) {
-                    case GeneralName.rfc822Name, GeneralName.dNSName, GeneralName.uniformResourceIdentifier -> Values.string(
-                        DERIA5String.getInstance(name.getName()),
-                        source
-                    );
+                final X5Value<?> value;
+                switch (name.getTagNo()) {
+                    case GeneralName.rfc822Name:
+                    case GeneralName.dNSName:
+                    case GeneralName.uniformResourceIdentifier:
+                        value = Values.string(DERIA5String.getInstance(name.getName()), source);
+                        break;
 
-                    case GeneralName.iPAddress -> Values.ipAddress(DEROctetString.getInstance(name.getName()), source);
-
-                    case GeneralName.directoryName -> {
-                        try {
-                            yield Values.dn(X500Name.getInstance(name.getName()), source);
-                        } catch (DnParseException e) {
-                            yield Values.error(e, source);
-                        }
-                    }
-
-                    case GeneralName.x400Address, GeneralName.registeredID, GeneralName.ediPartyName -> Values.asn1(
-                        name.getName().toASN1Primitive(),
-                        source
-                    );
-                    default -> throw new UnsupportedOperationException("Cannot handle name tag: " + name.getTagNo());
-                };
+                    case GeneralName.iPAddress:
+                        value = Values.ipAddress(DEROctetString.getInstance(name.getName()), source);
+                        break;
+                    case GeneralName.directoryName:
+                        value = dnOrErrorValue(X500Name.getInstance(name.getName()), source);
+                        break;
+                    case GeneralName.x400Address:
+                    case GeneralName.registeredID:
+                    case GeneralName.ediPartyName:
+                        value = Values.asn1(name.getName().toASN1Primitive(), source);
+                        break;
+                    default:
+                        throw new UnsupportedOperationException("Cannot handle name tag: " + name.getTagNo());
+                }
+                ;
                 populate(names, getKeyForTag(name.getTagNo()), value);
             }
         }
@@ -95,22 +96,39 @@ public class GeneralNamesRecord implements X5Record {
         return fields;
     }
 
+    private static X5Value<?> dnOrErrorValue(X500Name x500Name, X5StreamInfo source) {
+        try {
+            return Values.dn(x500Name, source);
+        } catch (DnParseException e) {
+            return Values.error(e, source);
+        }
+    }
+
     private static void populate(Map<String, List<X5Value>> map, String key, X5Value value) {
         map.computeIfAbsent(key, ignore -> new ArrayList<>()).add(value);
     }
 
     private static String getKeyForTag(int tagNo) {
-        return switch (tagNo) {
-            case 1 -> "rfc822";
-            case 2 -> "dns";
-            case 3 -> "x400";
-            case 4 -> "x500";
-            case 5 -> "edi";
-            case 6 -> "uri";
-            case 7 -> "ip";
-            case 8 -> "id";
-            default -> "tag:" + tagNo;
-        };
+        switch (tagNo) {
+            case 1:
+                return "rfc822";
+            case 2:
+                return "dns";
+            case 3:
+                return "x400";
+            case 4:
+                return "x500";
+            case 5:
+                return "edi";
+            case 6:
+                return "uri";
+            case 7:
+                return "ip";
+            case 8:
+                return "id";
+            default:
+                return "tag:" + tagNo;
+        }
     }
 
     @Override
