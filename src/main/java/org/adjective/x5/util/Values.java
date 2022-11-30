@@ -27,10 +27,15 @@ import javax.security.auth.x500.X500Principal;
 
 import org.adjective.x5.exception.DnParseException;
 import org.adjective.x5.exception.X5Exception;
-import org.adjective.x5.types.*;
+import org.adjective.x5.types.EncodingSyntax;
+import org.adjective.x5.types.FileType;
+import org.adjective.x5.types.X5Object;
+import org.adjective.x5.types.X5StreamInfo;
+import org.adjective.x5.types.X5Value;
 import org.adjective.x5.types.value.ASN1Value;
 import org.adjective.x5.types.value.Algorithm;
 import org.adjective.x5.types.value.DN;
+import org.adjective.x5.types.value.IPAddress;
 import org.adjective.x5.types.value.OID;
 import org.adjective.x5.types.value.X5BigInt;
 import org.adjective.x5.types.value.X5Boolean;
@@ -39,7 +44,11 @@ import org.adjective.x5.types.value.X5Decimal;
 import org.adjective.x5.types.value.X5Null;
 import org.adjective.x5.types.value.X5Number;
 import org.adjective.x5.types.value.X5String;
-import org.bouncycastle.asn1.*;
+import org.bouncycastle.asn1.ASN1Encodable;
+import org.bouncycastle.asn1.ASN1ObjectIdentifier;
+import org.bouncycastle.asn1.ASN1OctetString;
+import org.bouncycastle.asn1.ASN1Primitive;
+import org.bouncycastle.asn1.DERIA5String;
 import org.bouncycastle.asn1.x500.X500Name;
 import org.bouncycastle.asn1.x500.style.RFC4519Style;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
@@ -164,14 +173,14 @@ public class Values {
         return string(str.toString(), source);
     }
 
-    public static X5String ipAddress(ASN1OctetString octets, X5StreamInfo source) {
+    public static X5Value<String> ipAddress(ASN1OctetString octets, X5StreamInfo source) {
         return ipAddress(octets.getOctets(), source);
     }
 
-    public static X5String ipAddress(byte[] octets, X5StreamInfo source) {
+    public static X5Value<String> ipAddress(byte[] octets, X5StreamInfo source) {
         try {
-            InetAddress addr = Inet4Address.getByAddress(octets);
-            return string(addr.getHostAddress(), source);
+            InetAddress addr = InetAddress.getByAddress(octets);
+            return new IPAddress(addr, source);
         } catch (UnknownHostException e) {
             StringBuilder s = new StringBuilder();
             for (byte b : octets) {
