@@ -92,9 +92,15 @@ public class JavaX509Certificate extends AbstractX509Certificate implements Java
 
     @Override
     public X5Record subjectAlternativeName() {
+        var sanSource = source.withDescriptionPrefix("subject-alternative-name of");
         var extensionValue = certificate.getExtensionValue(Extension.subjectAlternativeName.getId());
-        var generalNames = GeneralNames.getInstance(extensionValue);
-        return new GeneralNamesRecord(generalNames, source.withDescriptionPrefix("subject-alternative-name of"));
+        if (extensionValue == null) {
+            return new GeneralNamesRecord(null, sanSource);
+        }
+        var seqBytes = new byte[extensionValue.length-2];
+        System.arraycopy(extensionValue, 2, seqBytes, 0, seqBytes.length);
+        var generalNames = GeneralNames.getInstance(seqBytes);
+        return new GeneralNamesRecord(generalNames, sanSource);
     }
 
     @Override
