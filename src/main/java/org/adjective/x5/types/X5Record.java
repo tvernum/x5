@@ -28,7 +28,7 @@ import org.adjective.x5.util.Values;
 
 public interface X5Record extends X5Object {
 
-    Map<String, X5Object> asMap();
+    Map<String, ? extends X5Object> asMap();
 
     int size();
 

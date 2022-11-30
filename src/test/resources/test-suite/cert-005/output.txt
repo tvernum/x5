@@ -1,0 +1,7 @@
+                            Path : pem/self-signed.crt
+                          Source : subject-alternative-name of Object #1 from pem/self-signed.crt
+                       File Type : PEM
+                     Object Type : IPAddress
+
+                           Value : 127.0.0.1
+--------------------------------   --------------------------------

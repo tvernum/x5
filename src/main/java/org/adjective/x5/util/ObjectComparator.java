@@ -32,6 +32,7 @@ public class ObjectComparator implements Comparator<X5Object> {
         X5Type.BOOLEAN,
         X5Type.NUMBER,
         X5Type.STRING,
+        X5Type.IP_ADDRESS,
         X5Type.PASSWORD,
         X5Type.DISTINGUISHED_NAME,
         X5Type.RELATIVE_DISTINGUISHED_NAME,

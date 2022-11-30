@@ -44,6 +44,7 @@ public abstract class AbstractX509Certificate extends AbstractCertificate implem
             map.put("validity.not_after", notAfter());
             map.put("signature.algorithm", signatureAlgorithm());
             map.put("basic-constraints", basicConstraints());
+            map.put("subject-alternative-name", subjectAlternativeName());
             return map;
         }).unchecked();
     }
@@ -54,7 +55,7 @@ public abstract class AbstractX509Certificate extends AbstractCertificate implem
             final DN sub = subject();
             return super.description() + " (" + sub + ")";
         } catch (DnParseException e) {
-           return super.description();
+            return super.description();
         }
     }
 
@@ -70,4 +71,5 @@ public abstract class AbstractX509Certificate extends AbstractCertificate implem
         map.put("Path Length", pathLength == null ? Values.nullValue(source) : Values.number(pathLength, 10, source));
         return new FixedRecord(map, source);
     }
+
 }

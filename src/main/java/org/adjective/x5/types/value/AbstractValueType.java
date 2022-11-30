@@ -15,11 +15,14 @@
 package org.adjective.x5.types.value;
 
 import java.util.Objects;
+import java.util.Optional;
 
 import org.adjective.x5.exception.X5Exception;
 import org.adjective.x5.types.X5Object;
 import org.adjective.x5.types.X5StreamInfo;
+import org.adjective.x5.types.X5Type;
 import org.adjective.x5.types.X5Value;
+import org.adjective.x5.util.Values;
 
 public abstract class AbstractValueType<T> implements X5Value<T> {
     protected final T value;
@@ -52,6 +55,14 @@ public abstract class AbstractValueType<T> implements X5Value<T> {
 
     protected String valueDescription() {
         return String.valueOf(value);
+    }
+
+    @Override
+    public <X extends X5Object> Optional<X> as(X5Type<X> type) {
+        if (type == X5Type.STRING && this.value instanceof CharSequence) {
+            return Optional.of(type.cast(Values.string(String.valueOf(value), source)));
+        }
+        return X5Value.super.as(type);
     }
 
     @Override

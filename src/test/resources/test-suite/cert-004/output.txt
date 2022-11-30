@@ -1,0 +1,18 @@
+                            Path : pem/self-signed.crt
+                          Source : Object #1 from pem/self-signed.crt
+                       File Type : PEM
+                     Object Type : Certificate
+
+                            type : X.509
+                             key : PublicKey : public key for Object #1 from pem/self-signed.crt
+                fingerprint.sha1 : ea:3b:92:97:ec:32:29:90:75:83:2b:9b:f2:2a:7f:4f:29:4a:19:c7
+              fingerprint.sha256 : 83:c7:c4:c2:34:52:d3:f3:31:4b:bb:d5:37:8b:e7:59:28:ad:a5:c6:0d:a5:c4:ee:a4:17:a6:b9:7d:26:3e:8b
+                         subject : cn=web,dc=example,dc=com (DistinguishedName)
+                          issuer : cn=web,dc=example,dc=com (DistinguishedName)
+                          serial : c6bad09e1ee6d6fe [radix:16] (Number)
+             validity.not_before : 2022-11-30T05:13:45Z (Date)
+              validity.not_after : 2032-08-29T05:13:45Z (Date)
+             signature.algorithm : 1.2.840.113549.1.1.11 [SHA256-with-RSA (PKCS#1)] (Algorithm)
+               basic-constraints : (null)
+        subject-alternative-name : dns=[www.example.com, ftp.example.com, images.example.com] ip=[127.0.0.1]
+--------------------------------   --------------------------------

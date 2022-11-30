@@ -14,4 +14,5 @@
               validity.not_after : 2049-08-21T03:35:34Z (Date)
              signature.algorithm : 1.2.840.113549.1.1.11 [SHA256-with-RSA (PKCS#1)] (Algorithm)
                basic-constraints : CA=true , Path Length=null (Null)
+        subject-alternative-name : 
 --------------------------------   --------------------------------

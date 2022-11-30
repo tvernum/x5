@@ -24,13 +24,11 @@ import org.adjective.x5.io.PemOutput;
 import org.adjective.x5.types.X5PublicKey;
 import org.adjective.x5.types.X5Record;
 import org.adjective.x5.types.X5StreamInfo;
-import org.adjective.x5.types.value.Algorithm;
-import org.adjective.x5.types.value.DN;
-import org.adjective.x5.types.value.X5Date;
-import org.adjective.x5.types.value.X5Number;
-import org.adjective.x5.types.value.X5String;
+import org.adjective.x5.types.value.*;
 import org.adjective.x5.util.Values;
 import org.bouncycastle.asn1.x509.BasicConstraints;
+import org.bouncycastle.asn1.x509.Extension;
+import org.bouncycastle.asn1.x509.GeneralNames;
 import org.bouncycastle.cert.X509CertificateHolder;
 
 public class PemCertificate extends AbstractX509Certificate {
@@ -78,6 +76,12 @@ public class PemCertificate extends AbstractX509Certificate {
             return null;
         }
         return basicConstraints(constraints.isCA(), constraints.getPathLenConstraint());
+    }
+
+    @Override
+    public X5Record subjectAlternativeName() {
+        final GeneralNames names = GeneralNames.fromExtensions(certificate.getExtensions(), Extension.subjectAlternativeName);
+        return new GeneralNamesRecord(names, source.withDescriptionPrefix("subject-alternative-name of"));
     }
 
     @Override

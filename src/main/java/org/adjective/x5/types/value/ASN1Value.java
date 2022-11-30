@@ -20,6 +20,7 @@ import java.io.OutputStream;
 import org.adjective.x5.io.Debug;
 import org.adjective.x5.types.X5StreamInfo;
 import org.adjective.x5.types.X5Type;
+import org.adjective.x5.util.Functions;
 import org.bouncycastle.asn1.ASN1Primitive;
 import org.bouncycastle.util.encoders.Hex;
 
@@ -45,7 +46,7 @@ public class ASN1Value extends AbstractValueType<byte[]> {
 
     @Override
     protected String valueDescription() {
-        return Hex.toHexString(value());
+        return Functions.hex(value(), ':');
     }
 
     public ASN1Value(byte[] value, X5StreamInfo source) {
