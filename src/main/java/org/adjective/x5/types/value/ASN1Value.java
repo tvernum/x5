@@ -30,6 +30,10 @@ public class ASN1Value extends AbstractValueType<byte[]> {
         super(bytes(primitive), source);
     }
 
+    public ASN1Value(byte[] value, X5StreamInfo source) {
+        super(value, source);
+    }
+
     private static byte[] bytes(ASN1Primitive primitive) {
         try {
             return primitive.getEncoded();
@@ -45,12 +49,8 @@ public class ASN1Value extends AbstractValueType<byte[]> {
     }
 
     @Override
-    protected String valueDescription() {
+    public String toTextValue() {
         return Functions.hex(value(), ':');
-    }
-
-    public ASN1Value(byte[] value, X5StreamInfo source) {
-        super(value, source);
     }
 
     @Override

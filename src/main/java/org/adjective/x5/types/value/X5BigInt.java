@@ -27,7 +27,7 @@ public class X5BigInt extends X5Number<BigInteger> {
     }
 
     @Override
-    protected String valueDescription() {
+    public String toTextValue() {
         if (radix == 0) {
             return value.toString();
         } else {

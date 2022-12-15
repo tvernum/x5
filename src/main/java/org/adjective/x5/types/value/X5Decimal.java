@@ -23,9 +23,4 @@ public class X5Decimal extends X5Number<BigDecimal> {
         super(value, source);
     }
 
-    @Override
-    protected String valueDescription() {
-        return value.toString();
-    }
-
 }

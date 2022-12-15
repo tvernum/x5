@@ -50,11 +50,7 @@ public abstract class AbstractValueType<T> implements X5Value<T> {
 
     @Override
     public String description() {
-        return valueDescription() + " (" + getTypeName() + ")";
-    }
-
-    protected String valueDescription() {
-        return String.valueOf(value);
+        return toTextValue() + " (" + getTypeName() + ")";
     }
 
     @Override

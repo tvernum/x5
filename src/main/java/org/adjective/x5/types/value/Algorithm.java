@@ -93,8 +93,8 @@ public class Algorithm extends AbstractValueType<OID> {
     }
 
     @Override
-    protected String valueDescription() {
-        return oid().valueDescription() + name.map(n -> " [" + n + "]").orElse("");
+    public String toTextValue() {
+        return oid().toTextValue() + name.map(n -> " [" + n + "]").orElse("");
     }
 
     @Override
