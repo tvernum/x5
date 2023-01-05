@@ -22,9 +22,9 @@ import org.adjective.x5.command.ToCommand;
 import org.adjective.x5.types.value.Password;
 
 public interface PasswordSupplier {
-    Password get(Path path);
+    Password get(Path path) throws IOException;
 
-    Password forCommand(Command command);
+    Password forCommand(Command command) throws IOException;
 
     Password forSpec(PasswordSpec spec) throws IOException;
 

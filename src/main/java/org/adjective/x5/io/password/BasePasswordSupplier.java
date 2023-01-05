@@ -21,6 +21,7 @@ import java.nio.file.Paths;
 
 import org.adjective.x5.command.Command;
 import org.adjective.x5.command.Environment;
+import org.adjective.x5.exception.X5Exception;
 import org.adjective.x5.types.FileType;
 import org.adjective.x5.types.PathInfo;
 import org.adjective.x5.types.value.Password;
@@ -35,16 +36,16 @@ public abstract class BasePasswordSupplier implements PasswordSupplier {
     }
 
     @Override
-    public Password get(Path path) {
+    public Password get(Path path) throws IOException {
         return input(path.toString());
     }
 
     @Override
-    public Password forCommand(Command command) {
+    public Password forCommand(Command command) throws IOException {
         return input(command.toString());
     }
 
-    protected abstract Password input(String text);
+    protected abstract Password input(String text) throws IOException;
 
     @Override
     public Password forSpec(PasswordSpec spec) throws IOException {

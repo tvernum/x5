@@ -15,9 +15,11 @@
 package org.adjective.x5.io.password;
 
 import java.io.Console;
+import java.io.IOException;
 import java.nio.file.Path;
 
 import org.adjective.x5.command.Environment;
+import org.adjective.x5.exception.X5Exception;
 import org.adjective.x5.types.X5StreamInfo;
 import org.adjective.x5.types.value.Password;
 import org.adjective.x5.util.Values;
@@ -32,7 +34,10 @@ public class InteractivePasswordSupplier extends BasePasswordSupplier {
     }
 
     @Override
-    protected Password input(String text) {
+    protected Password input(String text) throws IOException {
+        if (console == null) {
+            throw new IOException("Cannot read password interactively because there is no attached console");
+        }
         return new Password(console.readPassword("Password for %s: ", text), SOURCE);
     }
 }

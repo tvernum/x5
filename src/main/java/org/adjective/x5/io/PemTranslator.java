@@ -17,6 +17,7 @@ package org.adjective.x5.io;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.security.Provider;
+import java.security.interfaces.XECKey;
 import java.util.Optional;
 
 import org.adjective.x5.exception.BadFileContentException;
@@ -24,6 +25,7 @@ import org.adjective.x5.exception.BadPasswordException;
 import org.adjective.x5.exception.ExceptionInfo;
 import org.adjective.x5.exception.FileReadException;
 import org.adjective.x5.exception.X5Exception;
+import org.adjective.x5.exception.X5InputException;
 import org.adjective.x5.io.encrypt.EncryptionInfo;
 import org.adjective.x5.io.encrypt.Pkcs1EncryptionInfo;
 import org.adjective.x5.io.encrypt.Pkcs8EncryptionInfo;
@@ -78,7 +80,7 @@ class PemTranslator {
         }
         if (pemObj instanceof PEMEncryptedKeyPair) {
             PEMEncryptedKeyPair encrypted = (PEMEncryptedKeyPair) pemObj;
-            final Password password = passwordSupplier.get(path);
+            final Password password = readPassword(path, passwordSupplier);
             try {
                 final PEMKeyPair pair = encrypted.decryptKeyPair(new BcPEMDecryptorProvider(password.chars()));
                 final Optional<EncodingSyntax> syntax = Optional.ofNullable(traditionalOpensslSyntax(pair.getPrivateKeyInfo()));
@@ -103,7 +105,7 @@ class PemTranslator {
         }
         if (pemObj instanceof PKCS8EncryptedPrivateKeyInfo) {
             final PKCS8EncryptedPrivateKeyInfo encrypted = (PKCS8EncryptedPrivateKeyInfo) pemObj;
-            final Password password = passwordSupplier.get(path);
+            final Password password = readPassword(path, passwordSupplier);
             final PathInfo source = getSource(path, index);
             final EncryptionInfo encryption = new Pkcs8EncryptionInfo(encryptionSource(source, EncodingSyntax.PKCS8), encrypted, password);
             Debug.printf("Read encrypted PKCS#8: %s", encryption);
@@ -129,6 +131,14 @@ class PemTranslator {
             return Values.algorithm((ASN1ObjectIdentifier) pemObj, source);
         }
         throw new BadFileContentException("Unsupported PEM object " + pemObj.getClass() + " in " + path, path);
+    }
+
+    private static Password readPassword(Path path, PasswordSupplier passwordSupplier) throws X5Exception {
+        try {
+            return passwordSupplier.get(path);
+        } catch (IOException e) {
+            throw new X5InputException("Failed to read password for " + path + " - " + e.getMessage(), e);
+        }
     }
 
     private X5StreamInfo encryptionSource(PathInfo source, EncodingSyntax syntax) {
