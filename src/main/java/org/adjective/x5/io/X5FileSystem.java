@@ -18,25 +18,18 @@ import java.io.FileNotFoundException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-import org.adjective.x5.io.password.PasswordSpec;
 import org.adjective.x5.io.password.PasswordSupplier;
 import org.adjective.x5.types.X5File;
 
 public class X5FileSystem extends BaseFileSystem {
 
-    public X5FileSystem(PasswordSupplier passwordSupplier) {
-        super(passwordSupplier);
+    public X5FileSystem(PasswordSupplier passwordSupplier, StdIO stdio) {
+        super(passwordSupplier, stdio);
     }
 
     @Override
-    public Path resolve(String pathName) {
-        return Paths.get(pathName).toAbsolutePath().normalize();
-    }
-
-    @Override
-    public X5File read(Path path, PasswordSpec password) throws FileNotFoundException {
+    protected X5File readPath(Path path, PasswordSupplier passwords) throws FileNotFoundException {
         checkReadable(path);
-        final PasswordSupplier passwords = resolvePasswordSupplier(password);
         return new RawFile(path, passwords);
     }
 

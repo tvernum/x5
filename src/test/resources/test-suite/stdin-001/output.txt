@@ -1,0 +1,18 @@
+                            Path : /dev/stdin
+                          Source : Object #1 from /dev/stdin
+                       File Type : PEM
+                     Object Type : Certificate
+
+                            type : X.509
+                             key : PublicKey : public key for Object #1 from /dev/stdin
+                fingerprint.sha1 : 4e:42:2e:ae:79:6f:cb:cb:ff:f1:06:43:d2:20:ab:be:e0:19:4e:3a
+              fingerprint.sha256 : a7:f7:30:fc:ec:d9:10:22:62:1a:20:73:45:a8:06:9b:39:fd:49:1b:8c:76:68:3d:51:c5:8d:99:89:2c:c3:1b
+                         subject : cn=Root CA,ou=security,dc=example,dc=net (DistinguishedName)
+                          issuer : cn=Root CA,ou=security,dc=example,dc=net (DistinguishedName)
+                          serial : 22e28a5dbe11dd54acacdb5f8ac838b401221375 [radix:16] (Number)
+             validity.not_before : 2022-04-06T03:35:34Z (Date)
+              validity.not_after : 2049-08-21T03:35:34Z (Date)
+             signature.algorithm : 1.2.840.113549.1.1.11 [SHA256-with-RSA (PKCS#1)] (Algorithm)
+               basic-constraints : CA=true , Path Length=null (Null)
+        subject-alternative-name : 
+--------------------------------   --------------------------------

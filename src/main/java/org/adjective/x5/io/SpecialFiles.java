@@ -14,24 +14,28 @@
 
 package org.adjective.x5.io;
 
-import java.io.IOException;
+import org.adjective.x5.util.Tuple;
+
 import java.io.InputStream;
-import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.StandardOpenOption;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
+import java.util.function.Function;
 
-import org.adjective.x5.io.password.PasswordSupplier;
-import org.adjective.x5.types.X5File;
+public class SpecialFiles {
 
-public class RawFile extends BaseFile implements X5File {
+    public static Optional<Tuple<Path, InputStream>> resolveInput(Path path, StdIO stdio) {
+        if (path.toString().equals("-")) {
+            return Optional.of(new Tuple<>(Path.of("/dev/stdin"), stdio.getInput()));
+        }
 
-    public RawFile(Path path, PasswordSupplier passwordSupplier) {
-        super(path, passwordSupplier);
-    }
+        var name = path.toAbsolutePath().toString();
+        if (name.equals("/dev/stdin")) {
+            return Optional.of(new Tuple<>(path, stdio.getInput()));
+        }
 
-    @Override
-    protected InputStream open() throws IOException {
-        return Files.newInputStream(path(), StandardOpenOption.READ);
+        return Optional.empty();
     }
 
 }

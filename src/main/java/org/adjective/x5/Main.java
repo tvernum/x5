@@ -101,7 +101,7 @@ public class Main {
         }
         Debug.printf("Command line is [%s]\n", commandArgs.stream().map(s -> "'" + s + "'").collect(Collectors.joining(" ")));
 
-        final Context context = new Context(passwordSupplier, environment, new Properties());
+        final Context context = Context.create(passwordSupplier, environment, new Properties());
         execute(commandArgs, context);
     }
 

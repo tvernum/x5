@@ -14,37 +14,36 @@
 
 package org.adjective.x5.command;
 
-import java.io.InputStream;
 import java.io.PrintStream;
+import java.nio.file.FileSystem;
 import java.util.Properties;
 
 import org.adjective.x5.io.FileSys;
+import org.adjective.x5.io.StdIO;
 import org.adjective.x5.io.X5FileSystem;
 import org.adjective.x5.io.password.PasswordSupplier;
 
 public class Context {
 
-    private final PrintStream output;
-    private final InputStream input;
+    private final StdIO stdio;
     private final FileSys fileSystem;
     private final Environment environment;
     private final Properties properties;
     private final PasswordSupplier passwords;
 
-    public Context(PasswordSupplier passwordSupplier, Environment environment, Properties properties) {
-        this(System.out, System.in, new X5FileSystem(passwordSupplier), passwordSupplier, environment, properties);
+    public static Context create(PasswordSupplier passwordSupplier, Environment environment, Properties properties) {
+        final StdIO stdio = new StdIO(System.out, System.in);
+        return new Context(stdio, new X5FileSystem(passwordSupplier, stdio), passwordSupplier, environment, properties);
     }
 
     public Context(
-        PrintStream output,
-        InputStream input,
+        StdIO stdio,
         FileSys fileSystem,
         PasswordSupplier passwordSupplier,
         Environment environment,
         Properties properties
     ) {
-        this.output = output;
-        this.input = input;
+        this.stdio = stdio;
         this.fileSystem = fileSystem;
         this.environment = environment;
         this.properties = properties;
@@ -60,6 +59,6 @@ public class Context {
     }
 
     public PrintStream out() {
-        return output;
+        return stdio.getOutput();
     }
 }

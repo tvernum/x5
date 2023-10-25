@@ -27,70 +27,38 @@ import java.util.Properties;
 import org.adjective.x5.command.Context;
 import org.adjective.x5.command.Environment;
 import org.adjective.x5.io.FileSys;
+import org.adjective.x5.io.StdIO;
 import org.adjective.x5.io.password.PasswordSupplier;
 
 public class TestRunner {
 
     private final Main main = new Main();
 
-    public Result run(List<String> commandLine, PasswordSupplier passwordSupplier, FileSys fileSystem, Environment environment) {
-        return run(commandLine, passwordSupplier, new byte[0], fileSystem, environment, new Properties());
-    }
-
-    private Result run(
+    public Optional<Exception> run(
         List<String> commandLine,
         PasswordSupplier passwordSupplier,
-        byte[] input,
+        StdIO io,
+        FileSys fileSystem,
+        Environment environment
+    ) {
+        return run(commandLine, passwordSupplier, io, fileSystem, environment, new Properties());
+    }
+
+    private Optional<Exception> run(
+        List<String> commandLine,
+        PasswordSupplier passwordSupplier,
+        StdIO io,
         FileSys fs,
         Environment environment,
         Properties properties
     ) {
-        final ByteArrayOutputStream output = new ByteArrayOutputStream();
-        final Context context = new Context(
-            new PrintStream(output),
-            new ByteArrayInputStream(input),
-            fs,
-            passwordSupplier,
-            environment,
-            properties
-        );
+        final Context context = new Context(io, fs, passwordSupplier, environment, properties);
 
-        Optional<Exception> exception = Optional.empty();
         try {
             main.execute(commandLine, context);
         } catch (Exception e) {
-            exception = Optional.of(e);
+            return Optional.of(e);
         }
-        return new Result(output.toByteArray(), exception);
-    }
-
-    public class Result {
-        private final byte[] output;
-        private final Optional<Exception> exception;
-
-        private Result(byte[] output, Optional<Exception> exception) {
-            this.output = output;
-            this.exception = exception;
-        }
-
-        public String getOutput() {
-            return getOutput(StandardCharsets.UTF_8);
-        }
-
-        public String getOutput(Charset charset) {
-            return charset.decode(ByteBuffer.wrap(output)).toString();
-        }
-
-        public byte[] output() {
-            return output;
-        }
-
-        public Optional<Exception> exception() {
-            return exception;
-        }
-
-        public List<String> getOutputLines() {
-            return List.of(getOutput().split("\n"));
-        }
+        return Optional.empty();
     }
 }

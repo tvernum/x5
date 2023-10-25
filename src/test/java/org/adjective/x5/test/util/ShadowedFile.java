@@ -20,10 +20,12 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 
+import org.adjective.x5.io.BaseFile;
 import org.adjective.x5.io.RawFile;
+import org.adjective.x5.io.StdIO;
 import org.adjective.x5.io.password.PasswordSupplier;
 
-public class ShadowedFile extends RawFile {
+public class ShadowedFile extends BaseFile {
 
     private final Path concretePath;
 

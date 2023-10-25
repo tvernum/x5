@@ -15,26 +15,35 @@
 package org.adjective.x5.test.integ;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.fail;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.PrintStream;
 import java.io.UncheckedIOException;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.nio.ByteBuffer;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.util.List;
-import java.util.Set;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.adjective.x5.TestRunner;
 import org.adjective.x5.command.Environment;
 import org.adjective.x5.io.BaseFileSystem;
+import org.adjective.x5.io.SpecialFile;
+import org.adjective.x5.io.StdIO;
 import org.adjective.x5.io.password.FilePasswordSupplier;
-import org.adjective.x5.io.password.PasswordSpec;
 import org.adjective.x5.io.password.PasswordSupplier;
 import org.adjective.x5.test.util.ShadowedFile;
 import org.adjective.x5.types.X5File;
@@ -121,26 +130,69 @@ class X5IntegTest {
         var output = dir.resolve("output.txt");
         assertThat(output).isRegularFile();
 
+        var stdinPath = dir.resolve("stdin.txt");
         var suitePasswords = dir.resolve("password.txt");
         var sharedPasswords = samplesDirectory.resolve("passwords.txt");
         final List<Path> passwordFiles = Stream.of(suitePasswords, sharedPasswords).filter(Files::exists).collect(Collectors.toList());
 
         final Environment environment = new Environment();
         final FilePasswordSupplier passwordSupplier = new FilePasswordSupplier(environment, passwordFiles);
-        final TestFileSystem fileSystem = new TestFileSystem(passwordSupplier);
+
+        final ByteArrayOutputStream stdout = new ByteArrayOutputStream();
+        final var stdio = buildStdio(stdinPath, stdout);
+        final TestFileSystem fileSystem = new TestFileSystem(passwordSupplier, stdio);
 
         var commandText = Files.readAllLines(command);
-        final TestRunner.Result result = new TestRunner().run(commandText, passwordSupplier, fileSystem, environment);
-        result.exception().ifPresent(e -> { throw new RuntimeException("Test Failed", e); });
+        final Optional<Exception> result = new TestRunner().run(commandText, passwordSupplier, stdio, fileSystem, environment);
+        result.ifPresent(e -> { throw new RuntimeException("Test Failed", e); });
 
         var expectedOutput = Files.readAllLines(output);
-        assertThat(result.getOutputLines()).containsExactlyElementsOf(expectedOutput);
+        assertThat(getOutputLines(stdout)).containsExactlyElementsOf(expectedOutput);
+    }
+
+    public List<String> getOutputLines(ByteArrayOutputStream out) {
+        final byte[] bytes = out.toByteArray();
+        final String output = StandardCharsets.UTF_8.decode(ByteBuffer.wrap(bytes)).toString();
+        return List.of(output.split("\n"));
+    }
+
+    private StdIO buildStdio(Path inputSpecPath, ByteArrayOutputStream bytesOut) throws IOException {
+        var output = new PrintStream(bytesOut);
+        if (Files.exists(inputSpecPath) == false) {
+            return new StdIO(output, InputStream.nullInputStream());
+        }
+
+        final InputStream input;
+        final String inputSpec = Files.readString(inputSpecPath);
+        if (inputSpec.length() == 0) {
+            throw new IOException("File " + inputSpecPath.toAbsolutePath() + " is empty");
+        }
+
+        switch (inputSpec.charAt(0)) {
+            case '@': {
+                var stdinPath = samplesDirectory.resolve(Paths.get(inputSpec.substring(1).trim()));
+                if (Files.exists(stdinPath)) {
+                    input = Files.newInputStream(stdinPath, StandardOpenOption.READ);
+                } else {
+                    throw new FileNotFoundException(stdinPath.toAbsolutePath().toString());
+                }
+                break;
+            }
+            case '=': {
+                input = new ByteArrayInputStream(inputSpec.substring(1).getBytes(StandardCharsets.UTF_8));
+                break;
+            }
+            default: {
+                throw new IOException("Invalid marker char '" + inputSpec.charAt(0) + "' in file " + inputSpecPath.toAbsolutePath());
+            }
+        }
+        return new StdIO(output, input);
     }
 
     private static class TestFileSystem extends BaseFileSystem {
 
-        public TestFileSystem(PasswordSupplier passwordSupplier) throws IOException {
-            super(passwordSupplier);
+        public TestFileSystem(PasswordSupplier passwordSupplier, StdIO stdio) throws IOException {
+            super(passwordSupplier, stdio);
         }
 
         @Override
@@ -149,7 +201,7 @@ class X5IntegTest {
         }
 
         @Override
-        public X5File read(Path requestedPath, PasswordSpec password) throws FileNotFoundException {
+        protected X5File readPath(Path requestedPath, PasswordSupplier passwords) throws FileNotFoundException {
             Path resolvedPath = samplesDirectory.resolve(requestedPath);
             if (Files.exists(resolvedPath) == false) {
                 final Path outputPath = outputDirectory.resolve(requestedPath);
@@ -158,7 +210,6 @@ class X5IntegTest {
                 }
             }
             checkReadable(resolvedPath);
-            final PasswordSupplier passwords = resolvePasswordSupplier(password);
             return new ShadowedFile(resolvedPath, requestedPath, passwords);
         }
 

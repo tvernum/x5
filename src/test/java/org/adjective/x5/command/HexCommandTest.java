@@ -19,10 +19,13 @@ import static org.assertj.core.api.Assertions.assertThat;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.PrintStream;
 import java.util.List;
 import java.util.Properties;
 
+import org.adjective.x5.io.StdIO;
 import org.adjective.x5.io.X5FileSystem;
 import org.adjective.x5.io.password.PasswordSupplier;
 import org.adjective.x5.test.util.EmptyPasswordSupplier;
@@ -45,14 +48,8 @@ class HexCommandTest {
     public void buildContext() {
         final PasswordSupplier passwords = new EmptyPasswordSupplier();
         this.output = new ByteArrayOutputStream();
-        this.context = new Context(
-            new PrintStream(output),
-            new ByteArrayInputStream(new byte[0]),
-            new X5FileSystem(passwords),
-            passwords,
-            new Environment(),
-            new Properties()
-        );
+        final StdIO stdio = new StdIO(output, InputStream.nullInputStream());
+        this.context = new Context(stdio, new X5FileSystem(passwords, stdio), passwords, new Environment(), new Properties());
         values = new ValueStack();
     }
 
