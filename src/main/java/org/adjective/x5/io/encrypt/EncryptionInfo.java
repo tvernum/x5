@@ -17,8 +17,8 @@ package org.adjective.x5.io.encrypt;
 import java.util.Optional;
 
 import org.adjective.x5.types.X5Object;
+import org.adjective.x5.types.value.Algorithm;
 import org.adjective.x5.types.value.Password;
-import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 
 public interface EncryptionInfo extends X5Object {
     boolean isEncrypted();
@@ -29,5 +29,11 @@ public interface EncryptionInfo extends X5Object {
 
     Optional<String> getPkcs1DekAlgorithm();
 
-    Optional<ASN1ObjectIdentifier> getPkcs8Algorithm();
+    Optional<Algorithm> getPkcs8Algorithm();
+
+    /**
+     * This will often be one of {@link #getPkcs8Algorithm()} or {@link #getPkcs1DekAlgorithm()}, but if either of those as container
+     * algorithms (such as PBES2) then this will return the true underlying encryption algorithm (scheme).
+     */
+    Optional<Algorithm> getEncryptionScheme();
 }

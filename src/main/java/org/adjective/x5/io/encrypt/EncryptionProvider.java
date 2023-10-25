@@ -20,9 +20,11 @@ import org.adjective.x5.types.FileType;
 import org.adjective.x5.types.X5Object;
 import org.adjective.x5.types.X5StreamInfo;
 import org.adjective.x5.types.value.Password;
+import org.adjective.x5.util.Values;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.nist.NISTObjectIdentifiers;
 import org.bouncycastle.asn1.oiw.OIWObjectIdentifiers;
+import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 
 public class EncryptionProvider {
 
@@ -40,7 +42,7 @@ public class EncryptionProvider {
         } else if (source.getSyntax().filter(s -> s == EncodingSyntax.PKCS1).isPresent()) {
             return new Pkcs1EncryptionInfo(encSource, DEFAULT_PKCS1_ALGORITHM, password);
         } else {
-            return new Pkcs8EncryptionInfo(encSource, DEFAULT_PKCS8_ALGORITHM, null, password);
+            return new Pkcs8EncryptionInfo(encSource, new AlgorithmIdentifier(DEFAULT_PKCS8_ALGORITHM), null, password);
         }
     }
 

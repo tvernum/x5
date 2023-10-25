@@ -14,6 +14,7 @@
 
 package org.adjective.x5.util;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -52,6 +53,11 @@ public class ObjectIdentifiers {
         define("SHA512-256-with-RSA (PKCS#1)", PKCSObjectIdentifiers.sha512_256WithRSAEncryption, "RSA+SHA512-256");
         define("SHA224-with-RSA (PKCS#1)", PKCSObjectIdentifiers.sha224WithRSAEncryption, "RSA+SHA224");
         define("PBE-SHA1-DES-CBS (PKCS#5)", PKCSObjectIdentifiers.pbeWithSHA1AndDES_CBC, "DES+SHA1");
+        define("PBE-MD5-DES-CBS (PKCS#5)", PKCSObjectIdentifiers.pbeWithMD5AndDES_CBC, "DES+MD5");
+        define("PBES2 (PKCS#5)", PKCSObjectIdentifiers.id_PBES2, "PBES2");
+
+        define("DES-EDE3-CBC (EncryptionScheme)", PKCSObjectIdentifiers.des_EDE3_CBC, "DES3-CBC");
+
         define("SHA1", OIWObjectIdentifiers.idSHA1, "SHA1");
         define("Friendly Name (PKCS#9)", PKCSObjectIdentifiers.pkcs_9_at_friendlyName);
         define("Local Key Id (PKCS#9)", PKCSObjectIdentifiers.pkcs_9_at_localKeyId);

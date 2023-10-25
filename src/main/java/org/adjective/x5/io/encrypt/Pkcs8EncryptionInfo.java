@@ -14,7 +14,6 @@
 
 package org.adjective.x5.io.encrypt;
 
-import java.io.IOException;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -22,17 +21,20 @@ import java.util.function.Supplier;
 
 import org.adjective.x5.types.X5Object;
 import org.adjective.x5.types.X5StreamInfo;
-import org.adjective.x5.types.value.OID;
+import org.adjective.x5.types.value.Algorithm;
 import org.adjective.x5.types.value.Password;
 import org.adjective.x5.util.Lazy;
 import org.adjective.x5.util.Values;
-import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.pkcs.EncryptedPrivateKeyInfo;
+import org.bouncycastle.asn1.pkcs.EncryptionScheme;
+import org.bouncycastle.asn1.pkcs.PBES2Parameters;
+import org.bouncycastle.asn1.pkcs.PKCSObjectIdentifiers;
 import org.bouncycastle.asn1.x509.AlgorithmIdentifier;
 import org.bouncycastle.pkcs.PKCS8EncryptedPrivateKeyInfo;
 
 public class Pkcs8EncryptionInfo extends AbstractEncryptionInfo implements EncryptionInfo {
-    private final ASN1ObjectIdentifier id;
+    private final AlgorithmIdentifier algorithm;
+    private final Optional<EncryptionScheme> encryptionScheme;
     private final byte[] data;
     private final Password password;
     private final Supplier<Map<String, X5Object>> properties;
@@ -45,25 +47,20 @@ public class Pkcs8EncryptionInfo extends AbstractEncryptionInfo implements Encry
         this(source, encrypted.getEncryptionAlgorithm(), encrypted.getEncryptedData(), password);
     }
 
-    public Pkcs8EncryptionInfo(X5StreamInfo source, OID oid, Password password) throws IOException {
-        this(source, ASN1ObjectIdentifier.getInstance(oid.bytes()), null, password);
-    }
-
     public Pkcs8EncryptionInfo(X5StreamInfo source, AlgorithmIdentifier algorithm, byte[] data, Password password) {
-        this(source, algorithm.getAlgorithm(), data, password);
-    }
-
-    public Pkcs8EncryptionInfo(X5StreamInfo source, ASN1ObjectIdentifier id, byte[] data, Password password) {
         super(source);
-        this.id = id;
+        this.algorithm = algorithm;
         this.data = data;
         this.password = password;
+        this.encryptionScheme = Optional.of(this.algorithm)
+            .filter(alg -> alg.getAlgorithm().equals(PKCSObjectIdentifiers.id_PBES2))
+            .map(alg -> PBES2Parameters.getInstance(alg.getParameters()))
+            .map(p -> p.getEncryptionScheme());
         this.properties = Lazy.lazy(() -> {
             Map<String, X5Object> map = new LinkedHashMap<>();
             map.putAll(super.properties());
             if (data != null) {
                 map.put("parameters.pkcs8.raw", Values.binary(data));
-
             }
             return map;
         }).unchecked();
@@ -76,7 +73,7 @@ public class Pkcs8EncryptionInfo extends AbstractEncryptionInfo implements Encry
 
     @Override
     public Pkcs8EncryptionInfo withPassword(Password withPassword) {
-        return new Pkcs8EncryptionInfo(getSource(), id, data, withPassword);
+        return new Pkcs8EncryptionInfo(getSource(), algorithm, data, withPassword);
     }
 
     @Override
@@ -93,7 +90,7 @@ public class Pkcs8EncryptionInfo extends AbstractEncryptionInfo implements Encry
     protected boolean isEqualTo(EncryptionInfo enc) {
         if (enc instanceof Pkcs8EncryptionInfo) {
             Pkcs8EncryptionInfo other = (Pkcs8EncryptionInfo) enc;
-            return this.id.equals(other.id) && this.password.isEqualTo(other.password);
+            return this.algorithm.equals(other.algorithm) && this.password.isEqualTo(other.password);
         }
         return false;
     }
@@ -105,12 +102,22 @@ public class Pkcs8EncryptionInfo extends AbstractEncryptionInfo implements Encry
     }
 
     @Override
-    public Optional<ASN1ObjectIdentifier> getPkcs8Algorithm() {
-        return Optional.of(id);
+    public Optional<Algorithm> getPkcs8Algorithm() {
+        return Optional.of(Values.algorithm(algorithm, getSource()));
+    }
+
+    @Override
+    public Optional<Algorithm> getEncryptionScheme() {
+        return encryptionScheme.map(es -> Values.algorithm(es.getAlgorithm(), getSource().withDescriptionPrefix("PBES2:")))
+            .or(this::getPkcs8Algorithm);
     }
 
     @Override
     public String toString() {
-        return "Pkcs#8EncryptionInfo{" + id + '}';
+        if (encryptionScheme.isEmpty()) {
+            return "Pkcs#8EncryptionInfo{" + algorithm + '}';
+        } else {
+            return "Pkcs#8EncryptionInfo{" + algorithm + " ; " + encryptionScheme.get() + '}';
+        }
     }
 }

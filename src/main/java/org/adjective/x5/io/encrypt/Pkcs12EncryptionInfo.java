@@ -19,6 +19,7 @@ import java.util.Objects;
 import java.util.Optional;
 
 import org.adjective.x5.types.X5StreamInfo;
+import org.adjective.x5.types.value.Algorithm;
 import org.adjective.x5.types.value.OID;
 import org.adjective.x5.types.value.Password;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
@@ -80,7 +81,13 @@ public class Pkcs12EncryptionInfo extends AbstractEncryptionInfo implements Encr
     }
 
     @Override
-    public Optional<ASN1ObjectIdentifier> getPkcs8Algorithm() {
+    public Optional<Algorithm> getPkcs8Algorithm() {
+        return Optional.empty();
+    }
+
+    @Override
+    public Optional<Algorithm> getEncryptionScheme() {
+        // TODO read the PKCS#7 encrypted-data algorithm
         return Optional.empty();
     }
 

@@ -18,6 +18,7 @@ import java.util.Optional;
 
 import org.adjective.x5.types.EmptyRecord;
 import org.adjective.x5.types.X5Record;
+import org.adjective.x5.types.value.Algorithm;
 import org.adjective.x5.types.value.Password;
 import org.adjective.x5.util.Values;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
@@ -55,7 +56,12 @@ public class Unencrypted extends AbstractEncryptionInfo implements EncryptionInf
     }
 
     @Override
-    public Optional<ASN1ObjectIdentifier> getPkcs8Algorithm() {
+    public Optional<Algorithm> getPkcs8Algorithm() {
+        return Optional.empty();
+    }
+
+    @Override
+    public Optional<Algorithm> getEncryptionScheme() {
         return Optional.empty();
     }
 

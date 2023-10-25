@@ -18,6 +18,7 @@ import java.util.Optional;
 
 import org.adjective.x5.exception.X5Exception;
 import org.adjective.x5.types.X5StreamInfo;
+import org.adjective.x5.types.value.Algorithm;
 import org.adjective.x5.types.value.Password;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 
@@ -54,7 +55,12 @@ public class JksEncryptionInfo extends AbstractEncryptionInfo implements Encrypt
     }
 
     @Override
-    public Optional<ASN1ObjectIdentifier> getPkcs8Algorithm() {
+    public Optional<Algorithm> getPkcs8Algorithm() {
+        return Optional.empty();
+    }
+
+    @Override
+    public Optional<Algorithm> getEncryptionScheme() {
         return Optional.empty();
     }
 

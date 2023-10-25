@@ -28,6 +28,9 @@ import org.adjective.x5.types.X5Object;
 import org.adjective.x5.types.X5Record;
 import org.adjective.x5.types.X5StreamInfo;
 import org.adjective.x5.types.X5Type;
+import org.adjective.x5.types.value.Algorithm;
+import org.adjective.x5.types.value.OID;
+import org.adjective.x5.util.ObjectIdentifiers;
 import org.adjective.x5.util.Values;
 
 public abstract class AbstractEncryptionInfo implements EncryptionInfo {
@@ -58,7 +61,8 @@ public abstract class AbstractEncryptionInfo implements EncryptionInfo {
         Map<String, X5Object> props = new LinkedHashMap<>();
         Optional.ofNullable(password()).ifPresent(p -> props.put("password", p));
         getPkcs1DekAlgorithm().ifPresent(a -> props.put("algorithm.dek", Values.string(a, getSource())));
-        getPkcs8Algorithm().ifPresent(a -> props.put("algorithm.pkcs8", Values.algorithm(a, getSource())));
+        getPkcs8Algorithm().ifPresent(a -> props.put("algorithm.pkcs8", a));
+        getEncryptionScheme().ifPresent(a -> props.put("algorithm.scheme", a));
         return props;
     }
 
@@ -100,14 +104,23 @@ public abstract class AbstractEncryptionInfo implements EncryptionInfo {
     @Override
     public String description() {
         Map<String, String> algorithms = new LinkedHashMap<>();
+        getEncryptionScheme().ifPresent(a -> algorithms.put("Scheme", describe(a)));
         getPkcs1DekAlgorithm().ifPresent(a -> algorithms.put("DEK", a));
-        getPkcs8Algorithm().ifPresent(a -> algorithms.put("PKCS#8", a.getId()));
+        getPkcs8Algorithm().ifPresent(a -> algorithms.put("PKCS#8", describe(a)));
+        if (algorithms.getOrDefault("Scheme", "").equals(algorithms.get("PKCS#8"))) {
+            algorithms.remove("PKCS#8");
+        }
         if (algorithms.isEmpty()) {
             return "Encryption(no algorithm)";
         }
         return "Encryption{"
             + algorithms.entrySet().stream().map(e -> e.getKey() + "=" + e.getValue()).collect(Collectors.joining(", "))
             + "}";
+    }
+
+    private static String describe(Algorithm a) {
+        final OID oid = a.oid();
+        return ObjectIdentifiers.friendlyName(oid).map(n -> oid + " (" + n + ")").orElse(oid.toString());
     }
 
 }

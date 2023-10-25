@@ -55,6 +55,10 @@ public class OID extends AbstractValueType<String> {
         asn1.get().encodeTo(out);
     }
 
+    public ASN1ObjectIdentifier asn1() {
+        return this.asn1.get();
+    }
+
     public byte[] bytes() throws IOException {
         return asn1.get().getEncoded();
     }

@@ -23,6 +23,7 @@ import org.adjective.x5.exception.EncryptionException;
 import org.adjective.x5.io.encrypt.EncryptionInfo;
 import org.adjective.x5.io.encrypt.EncryptionProvider;
 import org.adjective.x5.types.EncodingSyntax;
+import org.adjective.x5.types.value.OID;
 import org.bouncycastle.asn1.ASN1Object;
 import org.bouncycastle.asn1.ASN1ObjectIdentifier;
 import org.bouncycastle.asn1.pkcs.PrivateKeyInfo;
@@ -76,7 +77,9 @@ public class PemOutput {
         if (encryption.isEncrypted() == false) {
             write(new PKCS8Generator(key, null), out);
         } else {
-            ASN1ObjectIdentifier algorithm = encryption.getPkcs8Algorithm().orElse(EncryptionProvider.DEFAULT_PKCS8_ALGORITHM);
+            ASN1ObjectIdentifier algorithm = encryption.getPkcs8Algorithm()
+                .map(a -> a.oid().asn1())
+                .orElse(EncryptionProvider.DEFAULT_PKCS8_ALGORITHM);
             try {
                 OutputEncryptor encryptor = new JcePKCSPBEOutputEncryptorBuilder(algorithm).setProvider(BOUNCY_CASTLE_PROVIDER)
                     .build(encryption.password().chars());
