@@ -17,7 +17,6 @@ package org.adjective.x5.io;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.security.Provider;
-import java.security.interfaces.XECKey;
 import java.util.Optional;
 
 import org.adjective.x5.exception.BadFileContentException;
@@ -40,6 +39,7 @@ import org.adjective.x5.types.X5StreamInfo;
 import org.adjective.x5.types.crypto.PemCertificate;
 import org.adjective.x5.types.crypto.PemKeyPair;
 import org.adjective.x5.types.crypto.PemPrivateKey;
+import org.adjective.x5.types.crypto.PemPublicKey;
 import org.adjective.x5.types.crypto.PemTrustedCertificate;
 import org.adjective.x5.types.value.Password;
 import org.adjective.x5.util.Values;
@@ -106,7 +106,7 @@ class PemTranslator {
         if (pemObj instanceof PKCS8EncryptedPrivateKeyInfo) {
             final PKCS8EncryptedPrivateKeyInfo encrypted = (PKCS8EncryptedPrivateKeyInfo) pemObj;
             final Password password = readPassword(path, passwordSupplier);
-            final PathInfo source = getSource(path, index);
+            final PathInfo source = new PathInfo(path, index, FileType.PEM, EncodingSyntax.PKCS8);
             final EncryptionInfo encryption = new Pkcs8EncryptionInfo(encryptionSource(source, EncodingSyntax.PKCS8), encrypted, password);
             Debug.printf("Read encrypted PKCS#8: %s", encryption);
             try {
@@ -123,12 +123,17 @@ class PemTranslator {
             }
         }
         if (pemObj instanceof PrivateKeyInfo) {
-            final PathInfo source = getSource(path, index);
+            // TODO: Not everything is PKCS#8
+            final PathInfo source = new PathInfo(path, index, FileType.PEM, EncodingSyntax.PKCS8);
             return translatePrivateKey(source, (PrivateKeyInfo) pemObj, UNENCRYPTED);
         }
         if (pemObj instanceof ASN1ObjectIdentifier) {
-            final PathInfo source = getSource(path, index);
+            final PathInfo source = new PathInfo(path, index, FileType.PEM);
             return Values.algorithm((ASN1ObjectIdentifier) pemObj, source);
+        }
+        if (pemObj instanceof SubjectPublicKeyInfo) {
+            final PathInfo source = new PathInfo(path, index, FileType.PEM);
+            return new PemPublicKey((SubjectPublicKeyInfo) pemObj, source);
         }
         throw new BadFileContentException("Unsupported PEM object " + pemObj.getClass() + " in " + path, path);
     }
@@ -157,10 +162,6 @@ class PemTranslator {
             return EncodingSyntax.OPENSSL;
         }
         return null;
-    }
-
-    private PathInfo getSource(Path path, int index) {
-        return new PathInfo(path, index, FileType.PEM, EncodingSyntax.PKCS8);
     }
 
     private CryptoValue translatePrivateKey(PathInfo source, PrivateKeyInfo keyInfo, EncryptionInfo encryption) {

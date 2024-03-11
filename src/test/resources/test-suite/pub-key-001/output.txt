@@ -1,0 +1,10 @@
+                            Path : pem/self-signed.pubkey
+                          Source : Object #1 from pem/self-signed.pubkey
+                       File Type : PEM
+                     Object Type : PublicKey
+
+                       algorithm : 1.2.840.113549.1.1.1 [RSA (PKCS#1)] (Algorithm)
+                            type : RSA
+                     rsa.modulus : bd0e7006bab62768a4afe1d02103c3eb28ac243dedeca2b73acc2d1761d21c68658b640c0758667786a9662122466e688792ed93e53e60a8ea0604c795605ccfcea70c17cfb3608b0ba4720078f74feec8ddaea036500f09a44b9f9416a268a8fa93eeb70c4e5137d77e8eb350dd6f818b6dbfdad02e0990216bd9babe8db80d93a38ba1abbafe069ee3acbad975b69dffba4e2e5908133ad12875432a51fe4f3415002582026b935876d375f58ccd0d124cfb7d033f715ecb79b36ff959bdb7d3623f3877b8b8dcc91646e7999b89f4b2dc31c90567165825fbcc6168cce9479f341ef1f7bcd48e90deb377ba5d264993a57c2de56c7f0b944ed71882934dcd [radix:16] (Number)
+                    rsa.exponent : 10001 [radix:16] (Number)
+--------------------------------   --------------------------------
