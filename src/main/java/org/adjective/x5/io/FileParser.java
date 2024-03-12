@@ -180,7 +180,7 @@ public class FileParser {
 
     private X5Object readPem(InputStream in, X5File file, PasswordSupplier passwordSupplier) throws IOException, X5Exception {
         try (Reader reader = new InputStreamReader(in)) {
-            final PEMParser parser = new PEMParser(reader);
+            final PEMParser parser = new PEMParser(new TrimReader(reader));
             final List<X5Object> objects = new ArrayList<>();
             int index = 1;
             while (true) {

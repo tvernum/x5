@@ -1,0 +1,9 @@
+                            Path : pem/whitespace.chain
+                          Source : pem/whitespace.chain
+                       File Type : PEM
+                     Object Type : CertificateChain
+
+                              #0 : Certificate : Object #1 from pem/whitespace.chain (cn=server,dc=example,dc=net)
+                              #1 : Certificate : Object #2 from pem/whitespace.chain (cn=Intermediate CA,ou=security,dc=example,dc=net)
+                              #2 : Certificate : Object #3 from pem/whitespace.chain (cn=Root CA,ou=security,dc=example,dc=net)
+--------------------------------   --------------------------------
