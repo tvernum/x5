@@ -19,17 +19,7 @@ class TrimReaderTest {
 
     @Test
     public void testReadIndentedContent() throws Exception {
-        var content = """
-            line 1
-             line 2
-            \tline 3
-            line 4
-
-              line 6
-             line 7
-
-            line 9
-            """;
+        var content = "line 1\n" + " line 2\n" + "\tline 3\n" + "line 4\n" + "\n" + "  line 6\n" + " line 7\n" + "\n" + "line 9\n";
         try (var reader = reader(content)) {
             assertThat(read(reader, 4)).isEqualTo("line");
             assertThat(read(reader, 2)).isEqualTo(" 1");
