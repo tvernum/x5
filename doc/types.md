@@ -18,7 +18,7 @@ Many objects can be converted to different types.
 
 For example, the `CertificateChain` type can be converted to a `Sequence` of `Certificate` objects, and a `KeyPair` object can be converted to either its `PrivateCredential` or `PublicCredential`.
 
-Most commands and functions will automatically convert an object to the required type (is possible). For cases where the automatic conversion doesn't produce the correct result the `as` command can be used to explicitly convert a type.
+Most commands and functions will automatically convert an object to the required type (if possible). For cases where the automatic conversion doesn't produce the correct result the `as` command can be used to explicitly convert a type.
 
 ## Types
 
