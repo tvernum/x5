@@ -41,6 +41,9 @@ public class ExceptionInfo {
     }
 
     private static boolean hasCauseOrSuppressed(Throwable throwable, Class<? extends Throwable> causeType) {
+        if (throwable == null) {
+            return false;
+        }
         if (causeType.isAssignableFrom(throwable.getClass())) {
             return true;
         }
