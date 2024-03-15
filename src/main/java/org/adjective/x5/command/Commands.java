@@ -31,6 +31,7 @@ public class Commands {
         put(new InfoCommand());
         put(new PrintCommand());
         put(new PropertyCommand());
+        put(new PropertiesCommand());
         put(new HexCommand());
         put(new CompareValueCommand(true));
         put(new CompareValueCommand(false));
@@ -51,6 +52,7 @@ public class Commands {
         put(new MergeCommand());
         put(new RecurseCommand());
         put(new FilterCommand());
+        put(new SelectCommand());
         put(new KeystoreFunction());
         put(new EntryFunction());
         put(new PairFunction());

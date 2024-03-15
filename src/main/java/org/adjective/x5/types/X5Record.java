@@ -20,6 +20,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.BiPredicate;
 import java.util.stream.Collectors;
 
 import org.adjective.x5.exception.X5Exception;
@@ -56,7 +57,13 @@ public interface X5Record extends X5Object {
 
     @Override
     default void writeTo(OutputStream out) throws IOException, X5Exception {
+        boolean first = true;
         for (String name : names()) {
+            if (first) {
+                first = false;
+            } else {
+                out.write('\n');
+            }
             IO.writeUtf8(name, out);
             out.write(':');
             Optional.ofNullable(value(name)).orElse(Values.nullValue(getSource())).writeTo(out);
@@ -76,4 +83,13 @@ public interface X5Record extends X5Object {
         return false;
     }
 
+    default X5Record filter(BiPredicate<? super String, ? super X5Object> predicate) {
+        return new FixedRecord(
+            asMap().entrySet()
+                .stream()
+                .filter(entry -> predicate.test(entry.getKey(), entry.getValue()))
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue)),
+            getSource().withDescriptionPrefix("filtered ")
+        );
+    }
 }

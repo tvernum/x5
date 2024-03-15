@@ -1,0 +1,2 @@
+subject:cn=server,dc=example,dc=net
+issuer:cn=Root CA,ou=security,dc=example,dc=net

@@ -58,6 +58,7 @@ public class WriteCommand extends AbstractSimpleCommand {
                 // ignore close from object
             }
         });
+        out.flush();
     }
 
 }

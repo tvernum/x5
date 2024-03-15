@@ -27,6 +27,7 @@ import org.adjective.x5.types.CertificateChain;
 import org.adjective.x5.types.X5Object;
 import org.adjective.x5.types.X5PublicKey;
 import org.adjective.x5.types.X5StreamInfo;
+import org.adjective.x5.types.X5Value;
 import org.adjective.x5.util.Values;
 
 abstract class AbstractCertificate implements Certificate {
@@ -67,7 +68,7 @@ abstract class AbstractCertificate implements Certificate {
         if (type.isAssignableFrom(X5PublicKey.class)) {
             return Optional.of(type.cast(publicKey()));
         }
-        return Optional.empty();
+        return Certificate.super.as(type);
     }
 
 }

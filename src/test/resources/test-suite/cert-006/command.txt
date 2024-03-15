@@ -1,0 +1,1 @@
+read pem/server1.crt | properties | select subject issuer | write -

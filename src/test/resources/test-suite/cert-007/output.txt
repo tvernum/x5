@@ -1,0 +1,8 @@
+                            Path : pem/self-signed.crt
+                          Source : filtered properties of Object #1 from pem/self-signed.crt
+                       File Type : PEM
+                     Object Type : Record
+
+             validity.not_before : 2022-11-30T05:13:45Z (Date)
+              validity.not_after : 2032-08-29T05:13:45Z (Date)
+--------------------------------   --------------------------------

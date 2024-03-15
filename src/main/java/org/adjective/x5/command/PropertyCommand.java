@@ -34,6 +34,11 @@ public class PropertyCommand extends AbstractSimpleCommand {
     public void execute(Context context, ValueSet values, List<String> args) throws X5Exception {
         requireMinimumArgumentCount(1, args);
         X5Object object = values.pop();
+        object = resolveProperty(object, args);
+        values.push(object);
+    }
+
+    static X5Object resolveProperty(X5Object target, List<String> args) throws ValueSetException {
         String scope = null;
         final List<String> names = args.stream().map(s -> s.split("\\.")).flatMap(Arrays::stream).collect(Collectors.toList());
         for (String propertyName : names) {
@@ -45,22 +50,22 @@ public class PropertyCommand extends AbstractSimpleCommand {
             if (scope != null) {
                 propertyName = scope + "." + propertyName;
             }
-            X5Object property = object.properties().get(propertyName);
+            X5Object property = target.properties().get(propertyName);
             if (property == null && optional == false) {
                 scope = propertyName;
             } else {
                 scope = null;
                 if (property == null) {
-                    object = nullValue(object.getSource().withDescriptionPrefix("missing property '" + propertyName + "' of"));
+                    target = nullValue(target.getSource().withDescriptionPrefix("missing property '" + propertyName + "' of"));
                 } else {
-                    object = property;
+                    target = property;
                 }
             }
         }
         if (scope != null) {
-            throw new ValueSetException("Property " + scope + " does not exist on " + object.description());
+            throw new ValueSetException("Property " + scope + " does not exist on " + target.description());
         }
-        values.push(object);
+        return target;
     }
 
 }

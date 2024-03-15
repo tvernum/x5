@@ -19,9 +19,14 @@ import java.util.List;
 
 import org.adjective.x5.exception.BadArgumentException;
 import org.adjective.x5.exception.FileReadException;
+import org.adjective.x5.exception.InvalidTargetException;
+import org.adjective.x5.exception.ValueSetException;
+import org.adjective.x5.exception.X5Exception;
 import org.adjective.x5.io.password.PasswordSpec;
 import org.adjective.x5.types.X5File;
+import org.adjective.x5.types.X5Object;
 import org.adjective.x5.types.X5StreamInfo;
+import org.adjective.x5.types.X5Type;
 import org.adjective.x5.util.Values;
 
 public abstract class AbstractCommand implements Command {
@@ -54,6 +59,15 @@ public abstract class AbstractCommand implements Command {
                 "The '" + name() + "' " + type() + " requires at least " + minRequired + " argument" + (minRequired == 1 ? "" : "s"),
                 this
             );
+        }
+    }
+
+    protected <X extends X5Object> X popStack(ValueSet values, X5Type<X> asType) throws X5Exception {
+        if (values.hasValue()) {
+            final var value = values.pop();
+            return value.as(asType).orElseThrow(() -> new InvalidTargetException(value, name() + ": cannot convert to " + asType + " - "));
+        } else {
+            throw new ValueSetException(name() + ": cannot read a " + asType + " from the stack because it is empty");
         }
     }
 

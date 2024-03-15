@@ -35,6 +35,8 @@ x5 read open.key | set-password =password | write encrypted.key
 
 ### Certificates
 
+#### Summary Information
+
 **_OpenSSL_**
 
 ```
@@ -51,6 +53,34 @@ openssl x509 -in certificate.crt -text -noout -fingerprint -sha256
 
 ```
 x5 read certificate.crt | info
+```
+
+#### Subject and Issuer 
+
+**_OpenSSL_**
+
+```
+openssl x509 -in certificate.crt -noout -subject -issuer
+```
+
+**_X5_**
+
+```
+x5 read certificate.crt | properties | select subject issuer | write -
+```
+
+#### Expiry (Validity Dates)
+
+**_OpenSSL_**
+
+```
+openssl x509 -in certificate.crt -noout -dates
+```
+
+**_X5_**
+
+```
+x5 read certificate.crt | properties | select validity.* | write -
 ```
 
 ### PKCS#12 Keystores

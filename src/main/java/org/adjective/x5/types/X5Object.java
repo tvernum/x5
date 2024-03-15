@@ -48,6 +48,8 @@ public interface X5Object {
     default <X extends X5Object> Optional<X> as(Class<X> type) {
         if (type.isInstance(this)) {
             return Optional.of(type.cast(this));
+        } else if (type == X5Record.class) {
+            return Optional.of(type.cast(new FixedRecord(properties(), getSource().withDescriptionPrefix("properties of"))));
         } else {
             return Optional.empty();
         }
