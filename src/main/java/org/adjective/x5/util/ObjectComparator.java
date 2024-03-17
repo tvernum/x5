@@ -30,6 +30,7 @@ public class ObjectComparator implements Comparator<X5Object> {
 
     static final List<X5Type<?>> TYPE_ORDER = Arrays.asList(
         X5Type.BOOLEAN,
+        X5Type.RESULT,
         X5Type.NUMBER,
         X5Type.STRING,
         X5Type.IP_ADDRESS,

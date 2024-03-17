@@ -46,7 +46,7 @@ public class KeystoreFunction extends AbstractFunction implements CommandLineFun
     }
 
     @Override
-    public void apply(CommandRunner runner, List<CommandLine> args) throws X5Exception {
+    public void apply(CommandRunner runner, List<String> options, List<CommandLine> args) throws X5Exception {
         try {
             var keyStore = new SimpleKeyStore(getSource());
 

@@ -33,7 +33,7 @@ public class EntryFunction extends EvaluatedFunction<StoreEntry> implements Comm
     }
 
     @Override
-    protected StoreEntry evaluateFunction(CommandRunner runner, List<CommandLine> argumentExpressions) throws X5Exception {
+    protected StoreEntry evaluateFunction(CommandRunner runner, List<String> options, List<CommandLine> argumentExpressions) throws X5Exception {
         requireArgumentCount(2, argumentExpressions);
         final String name = evaluateArgument(0, X5Type.STRING, runner, argumentExpressions).value();
         final CryptoValue value = evaluateArgument(1, X5Type.ANY_CRYPTO, runner, argumentExpressions);

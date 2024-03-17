@@ -56,6 +56,7 @@ public class Commands {
         put(new KeystoreFunction());
         put(new EntryFunction());
         put(new PairFunction());
+        put(new VerifyFunction());
     }
 
     private void put(SimpleCommand command) {

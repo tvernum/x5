@@ -28,7 +28,7 @@ public class ReadCommand extends CommandWithOptions {
     private final OptionSpec<PasswordSpec> passwordOption;
 
     public ReadCommand() {
-        passwordOption = declarePasswordOption("password", "p");
+        passwordOption = opt.declarePasswordOption("password", "p");
     }
 
     @Override

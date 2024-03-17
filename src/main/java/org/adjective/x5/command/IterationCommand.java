@@ -21,7 +21,6 @@ import java.util.Optional;
 import org.adjective.x5.cli.ChainedCommandLine;
 import org.adjective.x5.cli.CommandLine;
 import org.adjective.x5.cli.CommandRunner;
-import org.adjective.x5.cli.MultipleCommandLine;
 import org.adjective.x5.exception.CommandExecutionException;
 import org.adjective.x5.exception.X5Exception;
 import org.adjective.x5.types.ObjectSequence;
@@ -31,7 +30,7 @@ import org.adjective.x5.types.X5Object;
 abstract class IterationCommand extends AbstractFunction implements CommandLineFunction {
 
     @Override
-    public void apply(CommandRunner runner, List<CommandLine> args) throws X5Exception {
+    public void apply(CommandRunner runner, List<String> options, List<CommandLine> args) throws X5Exception {
         final X5Object pop = runner.getValues().pop();
         if (pop instanceof Sequence) {
             Sequence sequence = (Sequence) pop;

@@ -1,0 +1,5 @@
+                          Source : command-line::verify()
+                     Object Type : Result
+
+                              ok : true
+--------------------------------   --------------------------------

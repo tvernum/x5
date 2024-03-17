@@ -1,0 +1,8 @@
+                          Source : command-line::verify()
+                     Object Type : Sequence{Result}
+
+                          item.1 : OK
+                          item.2 : Err:PKIX path building failed: sun.security.provider.certpath.SunCertPathBuilderException: unable to find valid certification path to requested target
+                          item.3 : OK
+                          item.4 : Err:PKIX path building failed: sun.security.provider.certpath.SunCertPathBuilderException: unable to find valid certification path to requested target
+--------------------------------   --------------------------------

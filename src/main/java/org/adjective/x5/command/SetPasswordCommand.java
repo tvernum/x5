@@ -34,7 +34,7 @@ public class SetPasswordCommand extends CommandWithOptions {
     private final OptionSpec<Void> recurseOption;
 
     public SetPasswordCommand() {
-        recurseOption = declareValuelessOption("recurse", "r");
+        recurseOption = opt.declareValuelessOption("recurse", "r");
     }
 
     @Override

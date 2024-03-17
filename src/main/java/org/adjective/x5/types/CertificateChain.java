@@ -14,6 +14,8 @@
 
 package org.adjective.x5.types;
 
+import org.adjective.x5.util.Iterables;
+
 import java.util.List;
 
 public interface CertificateChain extends PublicCredential, Sequence {
@@ -28,4 +30,8 @@ public interface CertificateChain extends PublicCredential, Sequence {
     default Iterable<? extends X5Object> items() {
         return certificates();
     }
+
+    default Certificate leaf() {
+        return Iterables.head(certificates());
+    };
 }

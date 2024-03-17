@@ -76,9 +76,10 @@ public class X5Type<X extends X5Object> {
     );
     public static final X5Type<ASN1Value> ASN1 = new X5Type<>("ASN.1", ASN1Value.class, "asn1");
     public static final X5Type<DN> DISTINGUISHED_NAME = new X5Type<>("Distinguished Name", DN.class, "dn");
-    public static final X5Type<RDN> RELATIVE_DISTINGUISHED_NAME = new X5Type("Relative Distinguished Name", RDN.class, "rdn");
-    public static final X5Type<AVA> ATTRIBUTE_VALUE_ASSERTION = new X5Type("Attribute Value Assertion", AVA.class, "ava");
-    public static final X5Type<IPAddress> IP_ADDRESS = new X5Type("IP Address", IPAddress.class, "ip");
+    public static final X5Type<RDN> RELATIVE_DISTINGUISHED_NAME = new X5Type<>("Relative Distinguished Name", RDN.class, "rdn");
+    public static final X5Type<AVA> ATTRIBUTE_VALUE_ASSERTION = new X5Type<>("Attribute Value Assertion", AVA.class, "ava");
+    public static final X5Type<IPAddress> IP_ADDRESS = new X5Type<>("IP Address", IPAddress.class, "ip");
+    public static final X5Type<X5Result> RESULT = new X5Type<>("Result", X5Result.class);
 
     private final String name;
     private final Class<X> objectClass;

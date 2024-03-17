@@ -12,21 +12,14 @@
  * limitations under the License.
  */
 
-package org.adjective.x5.command;
+package org.adjective.x5.exception;
 
-import java.util.List;
+import org.adjective.x5.types.X5Object;
 
-import org.adjective.x5.cli.CommandLine;
-import org.adjective.x5.cli.CommandRunner;
-import org.adjective.x5.exception.X5Exception;
+import java.security.GeneralSecurityException;
 
-public interface CommandLineFunction extends Command {
-
-    @Override
-    default String type() {
-        return "function";
+public class UnexpectedTypeException extends X5Exception {
+    public UnexpectedTypeException(X5Object object, String message) {
+        super("For object " + object +", " + message);
     }
-
-    void apply(CommandRunner runner, List<String> options, List<CommandLine> args) throws X5Exception;
-
 }

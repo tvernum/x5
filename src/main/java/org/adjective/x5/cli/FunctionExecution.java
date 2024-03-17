@@ -21,22 +21,25 @@ import org.adjective.x5.exception.X5Exception;
 
 public class FunctionExecution implements CommandLine {
     private final CommandLineFunction function;
+    private final List<String> options;
     private final List<CommandLine> arguments;
 
-    public FunctionExecution(CommandLineFunction function, List<CommandLine> arguments) {
+    public FunctionExecution(CommandLineFunction function, List<String> options, List<CommandLine> arguments) {
         this.function = function;
+        this.options = options;
         this.arguments = arguments;
     }
 
     @Override
     public void execute(CommandRunner runner) throws X5Exception {
-        function.apply(runner, arguments);
+        function.apply(runner, options, arguments);
     }
 
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder(getClass().getSimpleName()).append('{');
         sb.append("function=").append(function);
+        sb.append(", options=").append(options);
         sb.append(", arguments=").append(arguments);
         sb.append('}');
         return sb.toString();
@@ -44,6 +47,10 @@ public class FunctionExecution implements CommandLine {
 
     CommandLineFunction getFunction() {
         return function;
+    }
+
+    public List<String> getOptions() {
+        return options;
     }
 
     List<CommandLine> getArguments() {

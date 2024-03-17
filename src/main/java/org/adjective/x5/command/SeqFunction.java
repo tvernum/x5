@@ -31,7 +31,7 @@ public class SeqFunction extends EvaluatedFunction<Sequence> {
     }
 
     @Override
-    protected Sequence evaluateFunction(CommandRunner runner, List<CommandLine> argumentExpressions) throws X5Exception {
+    protected Sequence evaluateFunction(CommandRunner runner, List<String> options, List<CommandLine> argumentExpressions) throws X5Exception {
         final List<X5Object> seq = evaluateArguments(runner, argumentExpressions);
         return new ObjectSequence(seq, getSource());
     }

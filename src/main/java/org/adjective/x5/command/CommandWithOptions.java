@@ -15,57 +15,21 @@
 package org.adjective.x5.command;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
-import org.adjective.x5.cli.SimpleConverter;
+import org.adjective.x5.command.util.SimpleOptions;
 import org.adjective.x5.exception.X5Exception;
-import org.adjective.x5.io.password.PasswordSpec;
 
-import joptsimple.NonOptionArgumentSpec;
-import joptsimple.OptionParser;
 import joptsimple.OptionSet;
-import joptsimple.OptionSpec;
-import joptsimple.OptionSpecBuilder;
 
 public abstract class CommandWithOptions extends AbstractSimpleCommand {
 
-    private final OptionParser parser = new OptionParser();
-    private final NonOptionArgumentSpec<String> arguments = parser.nonOptions("args");
-
-    protected OptionSpec<PasswordSpec> declarePasswordOption(String name, String... altNames) {
-        OptionSpecBuilder builder;
-        if (altNames.length == 0) {
-            builder = parser.accepts(name, "Password");
-        } else {
-            List<String> names = new ArrayList<>(altNames.length + 1);
-            names.add(name);
-            names.addAll(Arrays.asList(altNames));
-            builder = parser.acceptsAll(names, "Password");
-        }
-        return builder.withRequiredArg()
-            .describedAs("password specification")
-            .withValuesConvertedBy(new SimpleConverter<>(PasswordSpec.class, PasswordSpec::parse));
-    }
-
-    protected OptionSpec<Void> declareValuelessOption(String name, String... altNames) {
-        OptionSpecBuilder builder;
-        if (altNames.length == 0) {
-            builder = parser.accepts(name);
-        } else {
-            List<String> names = new ArrayList<>(altNames.length + 1);
-            names.add(name);
-            names.addAll(Arrays.asList(altNames));
-            builder = parser.acceptsAll(names);
-        }
-        return builder;
-    }
+    protected SimpleOptions opt = new SimpleOptions();
 
     @Override
     public void execute(Context context, ValueSet values, List<String> args) throws X5Exception, IOException {
-        final OptionSet options = parser.parse(args.toArray(new String[0]));
-        this.execute(context, values, options, arguments.values(options));
+        final SimpleOptions.ParsedOptions options = opt.parse(args);
+        this.execute(context, values, options.optionSet, options.args);
     }
 
     protected abstract void execute(Context context, ValueSet values, OptionSet options, List<String> args) throws X5Exception, IOException;

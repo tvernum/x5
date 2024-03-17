@@ -35,7 +35,7 @@ public class PairFunction extends EvaluatedFunction<KeyPair> implements CommandL
     }
 
     @Override
-    protected KeyPair evaluateFunction(CommandRunner runner, List<CommandLine> argumentExpressions) throws X5Exception {
+    protected KeyPair evaluateFunction(CommandRunner runner, List<String> options, List<CommandLine> argumentExpressions) throws X5Exception {
         requireArgumentCount(2, argumentExpressions);
         final CryptoValue v1 = evaluateArgument(0, X5Type.ANY_CRYPTO, runner, argumentExpressions);
         final CryptoValue v2 = evaluateArgument(1, X5Type.ANY_CRYPTO, runner, argumentExpressions);

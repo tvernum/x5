@@ -107,31 +107,30 @@ public class CommandLineParser {
         }
 
         @Override
-        public CommandLine visitCommandExpr(X5Parser.CommandExprContext ctx) {
-            final String name = ctx.commandName().getText();
-            final List<String> args = parseArguments(ctx.commandArgs());
-            return new CommandExecution(name, args);
-        }
-
-        @Override
-        public CommandLine visitFunctionExpr(X5Parser.FunctionExprContext ctx) {
+        public CommandLine visitCommandOrFunctionExpr(X5Parser.CommandOrFunctionExprContext ctx) {
             final String name = ctx.Word().getText();
-            final CommandLineFunction function = commands.getFunction(name)
-                .orElseThrow(() -> new IllegalArgumentException("No such function '" + name + "'"));
-            final List<CommandLine> args ;
+            final List<String> args = parseArguments(ctx.commandArgs());
             if (ctx.functionArgs() == null) {
-                args = List.of();
+                return new CommandExecution(name, args);
             } else {
-                args = new ArrayList<>(ctx.functionArgs().getChildCount());
-                ctx.functionArgs().expr().stream().forEachOrdered(e -> {
-                    final CommandLine expr = e.accept(this);
-                    if (expr == null) {
-                        throw new IllegalStateException("Failed to parse expression " + describe(e));
-                    }
-                    args.add(expr);
-                });
+                final CommandLineFunction function = commands.getFunction(name)
+                    .orElseThrow(() -> new IllegalArgumentException("No such function '" + name + "'"));
+                final List<CommandLine> funcArgs;
+                final X5Parser.InnerFunctionArgsContext innerArgs = ctx.functionArgs().innerFunctionArgs();
+                if (innerArgs == null) {
+                    funcArgs = List.of();
+                } else {
+                    funcArgs = new ArrayList<>(innerArgs.getChildCount());
+                    innerArgs.expr().stream().forEachOrdered(e -> {
+                        final CommandLine expr = e.accept(this);
+                        if (expr == null) {
+                            throw new IllegalStateException("Failed to parse expression " + describe(e));
+                        }
+                        funcArgs.add(expr);
+                    });
+                }
+                return new FunctionExecution(function, args, funcArgs);
             }
-            return new FunctionExecution(function, args);
         }
 
         @Override
@@ -197,7 +196,7 @@ public class CommandLineParser {
         }
 
         private String parseQuotedWord(String text) {
-            if(text.length() <= 2) {
+            if (text.length() <= 2) {
                 return "";
             }
             if (text.charAt(0) == '\'') {

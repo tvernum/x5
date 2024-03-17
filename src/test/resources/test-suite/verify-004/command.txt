@@ -1,0 +1,1 @@
+keystore(read pem/ca1.crt) | verify -seq -server ( read pem/server1.crt, read pem/server2.crt, read pem/server2.chain, read pem/self-signed.crt ) | info

@@ -24,11 +24,11 @@ import org.adjective.x5.types.X5Object;
 
 public abstract class EvaluatedFunction<X extends X5Object> extends AbstractFunction {
 
-    protected abstract X evaluateFunction(CommandRunner runner, List<CommandLine> argumentExpressions) throws X5Exception;
+    protected abstract X evaluateFunction(CommandRunner runner, List<String> options, List<CommandLine> argumentExpressions) throws X5Exception;
 
     @Override
-    public void apply(CommandRunner runner, List<CommandLine> arguments) throws X5Exception {
-        X result = evaluateFunction(runner, arguments);
+    public void apply(CommandRunner runner, List<String> options, List<CommandLine> arguments) throws X5Exception {
+        X result = evaluateFunction(runner, options, arguments);
         runner.getValues().push(result);
     }
 

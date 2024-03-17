@@ -28,9 +28,9 @@ public class EachCommand extends IterationCommand {
     }
 
     @Override
-    public void apply(CommandRunner runner, List<CommandLine> args) throws X5Exception {
+    public void apply(CommandRunner runner, List<String> options, List<CommandLine> args) throws X5Exception {
         requireArgumentCount(1, args);
-        super.apply(runner, args);
+        super.apply(runner, options, args);
     }
 
     @Override

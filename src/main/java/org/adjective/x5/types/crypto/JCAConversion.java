@@ -17,21 +17,32 @@ package org.adjective.x5.types.crypto;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.UncheckedIOException;
+import java.security.GeneralSecurityException;
 import java.security.Key;
+import java.security.KeyStore;
+import java.security.KeyStoreException;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 import java.util.List;
 import java.util.Optional;
 
+import org.adjective.x5.exception.CryptoStoreException;
 import org.adjective.x5.exception.InvalidTargetException;
 import org.adjective.x5.exception.LibraryException;
+import org.adjective.x5.exception.TypeConversionException;
 import org.adjective.x5.exception.UnencodableObjectException;
+import org.adjective.x5.exception.UnexpectedTypeException;
 import org.adjective.x5.exception.X5Exception;
+import org.adjective.x5.io.password.PasswordSupplier;
 import org.adjective.x5.types.Certificate;
 import org.adjective.x5.types.CertificateChain;
+import org.adjective.x5.types.CryptoStore;
+import org.adjective.x5.types.CryptoValue;
+import org.adjective.x5.types.KeyPair;
 import org.adjective.x5.types.PrivateCredential;
 import org.adjective.x5.types.PublicCredential;
 import org.adjective.x5.types.X509Certificate;
+import org.adjective.x5.types.value.Password;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
 public final class JCAConversion {
@@ -110,4 +121,34 @@ public final class JCAConversion {
         }
     }
 
+    public static KeyStore store(CryptoStore store, Password passwordForNewKeyStore) throws X5Exception {
+        if (store instanceof JavaKeyStore) {
+            JavaKeyStore java = (JavaKeyStore) store;
+            return java.getKeyStore();
+        }
+        try {
+            final KeyStore ks = KeyStore.getInstance(KeyStore.getDefaultType());
+            ks.load(null, passwordForNewKeyStore.chars());
+            for (var entry : store.entries()) {
+                final CryptoValue value = entry.value();
+                if (value instanceof Certificate) {
+                    ks.setCertificateEntry(entry.name(), certificate((Certificate) value));
+                } else if (value instanceof KeyPair) {
+                    var pair = (KeyPair) value;
+                    ks.setKeyEntry(
+                        entry.name(),
+                        key(pair.privateCredential()),
+                        passwordForNewKeyStore.chars(),
+                        chain(pair.publicCredential())
+                    );
+                } else {
+                    throw new UnexpectedTypeException(entry.value(), "Cannot convert store entry " + entry + " into a Java KeyStore entry");
+                }
+            }
+            return ks;
+        } catch (GeneralSecurityException | IOException e) {
+            throw new LibraryException("Failed to convert store  " + store + " to Java KeyStore", e);
+        }
+
+    }
 }

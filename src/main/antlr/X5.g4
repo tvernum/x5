@@ -38,8 +38,7 @@ expr  : exprElement ('|' exprElement)* ;
 
 exprElement
   : operatorExpr
-  | commandExpr
-  | functionExpr
+  | commandOrFunctionExpr
   | blockExpr
   | subExpr
   | literalExpr
@@ -48,12 +47,10 @@ exprElement
 operatorExpr: operator commandArgs ;
 operator: DOT | EQ | NEQ | QUEST | COLON;
 
-commandExpr: commandName commandArgs ;
-commandName: Word;
+commandOrFunctionExpr: Word commandArgs functionArgs?;
 commandArgs:  ( Word | QuotedWord | Number )*;
-
-functionExpr: Word '(' functionArgs? ')';
-functionArgs: expr ( ',' expr )*;
+functionArgs: '(' innerFunctionArgs? ')';
+innerFunctionArgs: expr ( ',' expr )*;
 
 blockExpr: Word '{' exprList '}';
 subExpr: '(' exprList ')';
