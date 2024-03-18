@@ -2,7 +2,7 @@
                      Object Type : Sequence{Result}
 
                           item.1 : OK
-                          item.2 : Err:PKIX path building failed: sun.security.provider.certpath.SunCertPathBuilderException: unable to find valid certification path to requested target
+                          item.2 : Err:Failed to verify [Certificate : Object #1 from pem/server2.crt (cn=server,dc=example,dc=net) in chain of length 1] against trust anchors [Store : keystore from Object #1 from pem/ca1.crt with 1 entry] : PKIX path building failed: sun.security.provider.certpath.SunCertPathBuilderException: unable to find valid certification path to requested target
                           item.3 : OK
-                          item.4 : Err:PKIX path building failed: sun.security.provider.certpath.SunCertPathBuilderException: unable to find valid certification path to requested target
+                          item.4 : Err:Failed to verify [Certificate : Object #1 from pem/self-signed.crt (cn=web,dc=example,dc=com) in chain of length 1] against trust anchors [Store : keystore from Object #1 from pem/ca1.crt with 1 entry] : PKIX path building failed: sun.security.provider.certpath.SunCertPathBuilderException: unable to find valid certification path to requested target
 --------------------------------   --------------------------------

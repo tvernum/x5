@@ -1,1 +1,1 @@
-(OK,Err:PKIX path building failed: sun.security.provider.certpath.SunCertPathBuilderException: unable to find valid certification path to requested target)
+(OK,Err:Failed to verify [Certificate : Object #1 from pem/self-signed.crt (cn=web,dc=example,dc=com) in chain of length 1] against trust anchors [Store : keystore/trust.p12 with 1 entry] : PKIX path building failed: sun.security.provider.certpath.SunCertPathBuilderException: unable to find valid certification path to requested target)

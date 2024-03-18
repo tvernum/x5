@@ -15,6 +15,8 @@
 package org.adjective.x5.command;
 
 import java.security.KeyStoreException;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
@@ -34,9 +36,11 @@ import org.adjective.x5.types.StoreEntry;
 import org.adjective.x5.types.X509Certificate;
 import org.adjective.x5.types.X5Key;
 import org.adjective.x5.types.X5Object;
+import org.adjective.x5.types.X5StreamInfo;
 import org.adjective.x5.types.X5Type;
 import org.adjective.x5.types.crypto.BasicStoreEntry;
 import org.adjective.x5.types.crypto.SimpleKeyStore;
+import org.adjective.x5.util.Values;
 
 public class KeystoreFunction extends AbstractFunction implements CommandLineFunction {
 
@@ -47,13 +51,27 @@ public class KeystoreFunction extends AbstractFunction implements CommandLineFun
 
     @Override
     public void apply(CommandRunner runner, List<String> options, List<CommandLine> args) throws X5Exception {
+        List<X5Object> list = new ArrayList<>();
+        for (CommandLine a : args) {
+            X5Object eval = eval(a, runner);
+            list.add(eval);
+        }
+        final List<X5Object> objects = Collections.unmodifiableList(list);
+        final X5StreamInfo source;
+        if (objects.size() == 1) {
+            source = objects.get(0).getSource().withDescriptionPrefix("keystore from");
+        } else {
+            source = Values.source(
+                "keystore("
+                    + objects.stream().map(X5Object::getSource).map(X5StreamInfo::getSourceDescription).collect(Collectors.joining(","))
+                    + ")"
+            );
+        }
         try {
-            var keyStore = new SimpleKeyStore(getSource());
+            var keyStore = new SimpleKeyStore(source);
 
-            for (int i = 0; i < args.size(); i++) {
-                CommandLine arg = args.get(i);
-                final X5Object eval = eval(arg, runner);
-                var entry = asEntry(eval, i, keyStore);
+            for (int i = 0; i < objects.size(); i++) {
+                var entry = asEntry(objects.get(i), i, keyStore);
                 keyStore.addEntry(entry, Optional.empty());
             }
             runner.getValues().push(keyStore);

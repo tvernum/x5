@@ -38,6 +38,16 @@ public interface CryptoStore extends X5Object, EncryptedObject, Sequence {
     Optional<EncryptionInfo> getEncryption(StoreEntry entry);
 
     @Override
+    default String description() {
+        try {
+            final int size = entries().size();
+            return EncryptedObject.super.description() + " with " + size + (size == 1 ? " entry" : " entries");
+        } catch (X5Exception e) {
+            return EncryptedObject.super.description();
+        }
+    }
+
+    @Override
     default Map<String, X5Object> properties() {
         try {
             return entries().stream().collect(Collectors.toMap(e -> "entry." + e.name(), StoreEntry::value));

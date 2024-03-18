@@ -1,1 +1,1 @@
-keystore(read pem/ca1.crt) | verify -server ( read pem/self-signed.crt ) | info
+keystore(read pem/ca1.crt) | verify -server ( read pem/self-signed.crt ) | info | pop

@@ -1,4 +1,7 @@
-                          Source : command-line::keystore()
+                            Path : pem/ec/ec-prime192v3.key
+                          Source : keystore from Object #2 from pem/ec/ec-prime192v3.key
+                       File Type : PEM
+                          Syntax : SEC-1
                      Object Type : Store
 
                         entry.ec : KeyPair{PrivateKey,PublicKey} : Object #2 from pem/ec/ec-prime192v3.key

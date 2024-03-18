@@ -33,6 +33,7 @@ public class Commands {
         put(new PropertyCommand());
         put(new PropertiesCommand());
         put(new HexCommand());
+        put(new PopCommand());
         put(new CompareValueCommand(true));
         put(new CompareValueCommand(false));
         // put(new CompareExpressionCommand(true));

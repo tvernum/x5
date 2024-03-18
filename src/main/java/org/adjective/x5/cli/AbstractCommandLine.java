@@ -11,8 +11,12 @@ public abstract class AbstractCommandLine implements CommandLine {
     protected static final SuccessResult SUCCESS = new SuccessResult(Values.source("command execution"));
 
     static X5Result getResult(CommandRunner runner) throws X5Exception {
-        final X5Object val = runner.getValues().peek();
-        return asResult(val);
+        if (runner.getValues().hasValue()) {
+            final X5Object val = runner.getValues().peek();
+            return asResult(val);
+        } else {
+            return SUCCESS;
+        }
     }
 
     static X5Result asResult(X5Object val) {

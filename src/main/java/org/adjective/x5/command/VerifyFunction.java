@@ -15,10 +15,6 @@
 package org.adjective.x5.command;
 
 import java.security.GeneralSecurityException;
-import java.security.KeyStoreException;
-import java.security.NoSuchAlgorithmException;
-import java.security.NoSuchProviderException;
-import java.security.PublicKey;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
@@ -28,7 +24,6 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import javax.net.ssl.TrustManager;
 import javax.net.ssl.TrustManagerFactory;
 import javax.net.ssl.X509TrustManager;
 
@@ -39,10 +34,8 @@ import org.adjective.x5.exception.BadArgumentException;
 import org.adjective.x5.exception.CommandExecutionException;
 import org.adjective.x5.exception.InvalidTargetException;
 import org.adjective.x5.exception.LibraryException;
-import org.adjective.x5.exception.UncheckedException;
 import org.adjective.x5.exception.UnexpectedTypeException;
 import org.adjective.x5.exception.X5Exception;
-import org.adjective.x5.types.Certificate;
 import org.adjective.x5.types.CertificateChain;
 import org.adjective.x5.types.CryptoStore;
 import org.adjective.x5.types.FailureResult;
@@ -53,13 +46,8 @@ import org.adjective.x5.types.X5Result;
 import org.adjective.x5.types.X5Type;
 import org.adjective.x5.types.crypto.JCAConversion;
 import org.adjective.x5.types.value.Password;
-import org.adjective.x5.util.ArrayBuilder;
-import org.adjective.x5.util.CheckedBiConsumer;
 
 import joptsimple.OptionSpec;
-
-import org.adjective.x5.util.CheckedBiFunction;
-import org.adjective.x5.util.Values;
 
 public class VerifyFunction extends EvaluatedFunction<X5Object> implements CommandLineFunction {
 
@@ -132,28 +120,14 @@ public class VerifyFunction extends EvaluatedFunction<X5Object> implements Comma
             throw new InvalidTargetException(store, "Cannot construct any X509 trust managers from ");
         }
 
-        CheckedBiFunction<X509TrustManager, CertificateChain, X5Result, X5Exception> verify = (trustManager, chain) -> {
-            java.security.cert.X509Certificate[] array = toJava(chain);
-            String authType = authType(chain, array);
-            try {
-                if (opts.has(options.client)) {
-                    trustManager.checkClientTrusted(array, authType);
-                } else {
-                    trustManager.checkServerTrusted(array, authType);
-                }
-                return new SuccessResult(getSource());
-            } catch (CertificateException e) {
-                return new FailureResult(e.getMessage(), getSource());
-            }
-        };
-
+        final boolean clientTrust = opts.has(options.client);
         final List<X5Result> seq = opts.has(options.sequence) ? new ArrayList<>() : null;
         X5Result result = null;
         for (int i = 0; i < argumentExpressions.size(); i++) {
             CommandLine arg = argumentExpressions.get(i);
             final X5Object eval = eval(arg, runner);
             var chain = asType(X5Type.CERTIFICATE_CHAIN, eval, i);
-            result = verify(verify, trustManagers, chain);
+            result = verify(store, trustManagers, chain, clientTrust);
             if (seq != null) {
                 seq.add(result);
             } else if (result.isError()) {
@@ -164,19 +138,37 @@ public class VerifyFunction extends EvaluatedFunction<X5Object> implements Comma
         return seq == null ? result : new ObjectSequence(seq, getSource());
     }
 
-    private X5Result verify(
-        CheckedBiFunction<X509TrustManager, CertificateChain, X5Result, X5Exception> verify,
-        List<X509TrustManager> trustManagers,
-        CertificateChain chain
-    ) throws X5Exception {
-        X5Result result = null;
+    private X5Result verify(CryptoStore store, List<X509TrustManager> trustManagers, CertificateChain chain, boolean clientTrust)
+        throws X5Exception {
+        java.security.cert.X509Certificate[] array = toJava(chain);
+        String authType = authType(chain, array);
         for (var tm : trustManagers) {
-            result = verify.apply(tm, chain);
-            if (result.isError()) {
-                return result;
+            try {
+                verify(tm, array, authType, clientTrust);
+            } catch (CertificateException e) {
+                return new FailureResult(
+                    "Failed to verify ["
+                        + chain.leaf().description()
+                        + " in chain of length "
+                        + chain.certificates().size()
+                        + "] against trust anchors ["
+                        + store.description()
+                        + "] : "
+                        + e.getMessage(),
+                    getSource()
+                );
             }
         }
-        return result;
+        return new SuccessResult(getSource());
+    }
+
+    private void verify(X509TrustManager trustManager, X509Certificate[] chain, String authType, boolean clientTrust)
+        throws CertificateException {
+        if (clientTrust) {
+            trustManager.checkClientTrusted(chain, authType);
+        } else {
+            trustManager.checkServerTrusted(chain, authType);
+        }
     }
 
     private java.security.cert.X509Certificate[] toJava(CertificateChain chain) throws X5Exception {

@@ -1,6 +1,6 @@
                           Source : command-line::verify()
                      Object Type : Result
 
-                           error : PKIX path building failed: sun.security.provider.certpath.SunCertPathBuilderException: unable to find valid certification path to requested target
+                           error : Failed to verify [Certificate : Object #1 from pem/self-signed.crt (cn=web,dc=example,dc=com) in chain of length 1] against trust anchors [Store : keystore from Object #1 from pem/ca1.crt with 1 entry] : PKIX path building failed: sun.security.provider.certpath.SunCertPathBuilderException: unable to find valid certification path to requested target
                               ok : false
 --------------------------------   --------------------------------
