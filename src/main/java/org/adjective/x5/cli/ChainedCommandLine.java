@@ -18,6 +18,9 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.adjective.x5.exception.X5Exception;
+import org.adjective.x5.types.SuccessResult;
+import org.adjective.x5.types.X5Result;
+import org.adjective.x5.util.Values;
 
 public class ChainedCommandLine implements CommandLine {
     private final List<CommandLine> commands;
@@ -27,14 +30,16 @@ public class ChainedCommandLine implements CommandLine {
     }
 
     @Override
-    public void execute(CommandRunner runner) throws X5Exception {
+    public X5Result execute(CommandRunner runner) throws X5Exception {
+        X5Result result = new SuccessResult(Values.source("command execution"));
         for (Iterator<CommandLine> iterator = commands.iterator(); iterator.hasNext();) {
             CommandLine command = iterator.next();
             if (iterator.hasNext()) {
-                command.execute(runner.duplicate());
+                result = command.execute(runner.duplicate());
             } else {
-                command.execute(runner);
+                result = command.execute(runner);
             }
         }
+        return result;
     }
 }

@@ -39,6 +39,8 @@ import joptsimple.OptionParser;
 import joptsimple.OptionSet;
 import joptsimple.OptionSpec;
 
+import org.adjective.x5.types.X5Result;
+
 public class Main {
     private final OptionParser parser = new OptionParser();
 
@@ -60,7 +62,8 @@ public class Main {
 
     public static void main(String[] args) throws IOException {
         try {
-            new Main().execute(args);
+            final int rc = new Main().execute(args);
+            System.exit(rc);
         } catch (X5Exception e) {
             Debug.error(e, "Command failed");
 
@@ -74,14 +77,14 @@ public class Main {
         }
     }
 
-    private void execute(String[] args) throws X5Exception, IOException {
+    private int execute(String[] args) throws X5Exception, IOException {
         final Environment environment = new Environment();
         PasswordSupplier passwordSupplier = new InteractivePasswordSupplier(environment);
 
         final OptionSet options = parser.parse(args);
         if (options.has(helpOption)) {
             parser.printHelpOn(System.out);
-            return;
+            return -1;
         }
         if (options.has(debugOption)) {
             Debug.enable();
@@ -97,18 +100,24 @@ public class Main {
         final List<String> commandArgs = arguments.values(options);
         if (commandArgs.isEmpty()) {
             System.err.println("Command line is required");
-            return;
+            return -1;
         }
         Debug.printf("Command line is [%s]\n", commandArgs.stream().map(s -> "'" + s + "'").collect(Collectors.joining(" ")));
 
         final Context context = Context.create(passwordSupplier, environment, new Properties());
-        execute(commandArgs, context);
+        return execute(commandArgs, context);
     }
 
-    void execute(List<String> commandArgs, Context context) throws X5Exception {
+    int execute(List<String> commandArgs, Context context) throws X5Exception {
         final Commands commands = new Commands();
         final CommandLine cli = new CommandLineParser(commands).parse(commandArgs);
         final ValueSet values = new ValueStack();
-        cli.execute(new CommandRunner(commands, context, values));
+        final X5Result result  = cli.execute(new CommandRunner(commands, context, values));
+        if(result.isOK()) {
+            return 0;
+        } else {
+            System.err.println(result.error());
+            return 1;
+        }
     }
 }

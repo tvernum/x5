@@ -17,8 +17,12 @@ package org.adjective.x5.cli;
 import java.util.List;
 
 import org.adjective.x5.exception.X5Exception;
+import org.adjective.x5.types.SuccessResult;
+import org.adjective.x5.types.X5Result;
+import org.adjective.x5.types.X5Type;
+import org.adjective.x5.util.Values;
 
-public class CommandExecution implements CommandLine {
+public class CommandExecution extends AbstractCommandLine {
     private final String command;
     private final List<String> args;
 
@@ -37,8 +41,9 @@ public class CommandExecution implements CommandLine {
     }
 
     @Override
-    public void execute(CommandRunner runner) throws X5Exception {
+    public X5Result execute(CommandRunner runner) throws X5Exception {
         runner.execute(command, args);
+        return getResult(runner);
     }
 
     @Override

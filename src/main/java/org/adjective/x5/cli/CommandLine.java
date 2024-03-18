@@ -15,9 +15,10 @@
 package org.adjective.x5.cli;
 
 import org.adjective.x5.exception.X5Exception;
+import org.adjective.x5.types.X5Result;
 
 public interface CommandLine {
 
-    void execute(CommandRunner runner) throws X5Exception;
+    X5Result execute(CommandRunner runner) throws X5Exception;
 
 }

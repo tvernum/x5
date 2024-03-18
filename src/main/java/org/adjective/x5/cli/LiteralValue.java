@@ -16,8 +16,9 @@ package org.adjective.x5.cli;
 
 import org.adjective.x5.exception.X5Exception;
 import org.adjective.x5.types.X5Object;
+import org.adjective.x5.types.X5Result;
 
-public class LiteralValue implements CommandLine {
+public class LiteralValue extends AbstractCommandLine implements CommandLine {
 
     private final X5Object object;
 
@@ -26,8 +27,9 @@ public class LiteralValue implements CommandLine {
     }
 
     @Override
-    public void execute(CommandRunner runner) throws X5Exception {
+    public X5Result execute(CommandRunner runner) throws X5Exception {
         runner.getValues().push(this.object);
+        return asResult(this.object);
     }
 
     X5Object getObject() {

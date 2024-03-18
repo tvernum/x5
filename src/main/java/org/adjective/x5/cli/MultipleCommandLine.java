@@ -17,8 +17,9 @@ package org.adjective.x5.cli;
 import java.util.List;
 
 import org.adjective.x5.exception.X5Exception;
+import org.adjective.x5.types.X5Result;
 
-public class MultipleCommandLine implements CommandLine {
+public class MultipleCommandLine extends AbstractCommandLine implements CommandLine {
     private final List<CommandLine> commands;
 
     public MultipleCommandLine(List<CommandLine> commands) {
@@ -26,9 +27,11 @@ public class MultipleCommandLine implements CommandLine {
     }
 
     @Override
-    public void execute(CommandRunner runner) throws X5Exception {
+    public X5Result execute(CommandRunner runner) throws X5Exception {
+        X5Result result = super.SUCCESS;
         for (var command : commands) {
-            command.execute(runner.duplicate());
+            result = command.execute(runner.duplicate());
         }
+        return result;
     }
 }

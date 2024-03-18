@@ -17,8 +17,9 @@ package org.adjective.x5.cli;
 import java.util.List;
 
 import org.adjective.x5.exception.X5Exception;
+import org.adjective.x5.types.X5Result;
 
-public class PipedCommand implements CommandLine {
+public class PipedCommand extends AbstractCommandLine implements CommandLine {
     private final List<CommandLine> commands;
 
     public PipedCommand(List<CommandLine> commands) {
@@ -26,10 +27,11 @@ public class PipedCommand implements CommandLine {
     }
 
     @Override
-    public void execute(CommandRunner runner) throws X5Exception {
+    public X5Result execute(CommandRunner runner) throws X5Exception {
         for (CommandLine c : commands) {
             c.execute(runner);
         }
+        return getResult(runner);
     }
 
     List<CommandLine> getCommands() {

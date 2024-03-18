@@ -18,8 +18,9 @@ import java.util.List;
 
 import org.adjective.x5.command.CommandLineFunction;
 import org.adjective.x5.exception.X5Exception;
+import org.adjective.x5.types.X5Result;
 
-public class FunctionExecution implements CommandLine {
+public class FunctionExecution extends AbstractCommandLine implements CommandLine {
     private final CommandLineFunction function;
     private final List<String> options;
     private final List<CommandLine> arguments;
@@ -31,8 +32,9 @@ public class FunctionExecution implements CommandLine {
     }
 
     @Override
-    public void execute(CommandRunner runner) throws X5Exception {
+    public X5Result execute(CommandRunner runner) throws X5Exception {
         function.apply(runner, options, arguments);
+        return getResult(runner);
     }
 
     @Override
