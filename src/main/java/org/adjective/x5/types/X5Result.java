@@ -17,7 +17,7 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
 
-public interface X5Result extends X5Object {
+public interface X5Result extends X5Object , ToTextValue {
 
     String error();
 
@@ -32,6 +32,11 @@ public interface X5Result extends X5Object {
     @Override
     default String description() {
         return isError() ? "Err:" + error() : "OK";
+    }
+
+    @Override
+    default CharSequence toTextValue() {
+        return description();
     }
 
     @Override

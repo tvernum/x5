@@ -392,6 +392,40 @@ seq( read ca.crt , read intermediate.crt, read leaf.crt ) | as CertificateChain
 
 `seq` will push one object onto the stack (the Sequence)
 
+--
+
+### `verify`- _Verify one or more certificate chains against a trust-store
+
+The `verify` function pops a keystore off the value stack and then uses it as a set of trust anchors to verify one or more certificate chains
+
+#### Options
+
+`verify` supports the following options:
+
+- `-sequence`, `-seq` - Normally `verify` checks the certificate chains in order and returns the first failure result (or OK if there are no errors).
+                        The `-seq` option causes the function to return a sequence of `Result` objects instead.
+- `-server` - Perform verification using server certificate verification rules (cannot be used with `-client`)
+- `-client` - Perform verification using client certificate verification rules (cannot be used with `-server`)
+- `-algorithm`, `-algo` - Specify the Java trust management algorithm to use (defaults to `PKIX`)
+- `-provider`, `-prov` - Specify the Java security provider to use (defaults to the JVM's default provider)
+
+#### Arguments
+
+`verify` takes 1 or more functional arguments, each one must be convertible to a certificate chain
+
+#### Example
+```
+read trust.p12 | verify -server -seq ( read "cert1.crt", read "cert2.chain", read "keys.p12" | .entry.server.public )
+```
+
+#### Stack
+
+`verify` will pop one object from the stack (the keystore) and push one object onto the stack (a result, or sequence of results).
+
+By default this will be a `Result` - either the first failure, or OK if all chains were successfully verified
+
+With the `-sequence` option, `verify` will always push a `Sequence` object containing a `Result` for each certificate chain passed in as an arugment
+
 -------
 
 ## To Document

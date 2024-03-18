@@ -171,3 +171,8 @@ A list of objects. The elements are not guaranteed to be of a single type.
 
 A collection of named objects.
 
+### Other Types
+
+#### Result
+
+A success/failure result. A Result is either a success (OK) or a failure with a message (Err)

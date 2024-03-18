@@ -1,0 +1,1 @@
+read keystore/trust.p12 | verify -sequence -server ( read keystore/server.p12 | .entry.server1 , read pem/self-signed.crt ) | print
